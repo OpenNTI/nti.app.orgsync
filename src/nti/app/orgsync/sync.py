@@ -22,7 +22,7 @@ def get_api_key():
     key = component.getUtility(IOrgSyncKey)
     return key.APIKey
 
-def synchronize_orgsync(workers=1, timeout=DEFAULT_TIMEOUT):
+def synchronize_orgsync(workers, timeout):
     db = component.getUtility(IOrgSyncDatabase)
     key = get_api_key()
     successful_sync = True

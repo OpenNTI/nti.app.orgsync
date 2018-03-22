@@ -27,5 +27,5 @@ class TestSync(ApplicationLayerTest):
     def test_sync(self, mock_sy, mock_key):
         mock_sy.is_callable().returns_fake()
         mock_key.is_callable().returns('abc')
-        successful = synchronize_orgsync()
+        successful = synchronize_orgsync(1, 0)
         assert_that(successful, is_(True))
