@@ -80,6 +80,6 @@ class OrgSyncSyncView(AbstractAuthenticatedView,
             start_date = session.query(func.max(entries.created_at)).scalar()
         if start_date is None:
             start_date = end_date - timedelta(days=7)
-        workers = data.get('workers') or DEFAULT_MAX_WORKERS
+        workers = int(data.get('workers') or DEFAULT_MAX_WORKERS)
         synchronize_orgsync(start_date, end_date, workers)
         return hexc.HTTPOk()

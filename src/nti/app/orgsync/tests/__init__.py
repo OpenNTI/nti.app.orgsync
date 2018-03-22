@@ -12,5 +12,14 @@ from zope import component
 from nti.app.testing.application_webtest import ApplicationTestLayer
 
 
+class NoOpCM(object):
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, t, v, tb):
+        pass
+
+
 class OrgSyncApplicationTestLayer(ApplicationTestLayer):
     pass
