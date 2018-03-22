@@ -11,6 +11,7 @@
 	<include package="zope.security" />
 	<include package="zope.location" />
 
+	<include package="nti.orgsync" />
 	<include package="nti.orgsync_rdbms" />
 
 	<include package=".views" />
