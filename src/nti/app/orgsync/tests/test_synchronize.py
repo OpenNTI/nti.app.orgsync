@@ -12,20 +12,21 @@ from hamcrest import assert_that
 
 import fudge
 
-from nti.app.orgsync.sync import synchronize_orgsync
+from nti.app.orgsync.synchronize import synchronize_orgsync
 
 from nti.app.orgsync.tests import OrgSyncApplicationTestLayer
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
+
 class TestSync(ApplicationLayerTest):
 
     layer = OrgSyncApplicationTestLayer
 
-    @fudge.patch('nti.app.orgsync.sync.synchronize',
-                 'nti.app.orgsync.sync.get_api_key')
-    def test_sync(self, mock_sy, mock_key):
-        mock_sy.is_callable().returns_fake()
-        mock_key.is_callable().returns('abc')
-        successful = synchronize_orgsync(1, 0)
+    @fudge.patch('nti.app.orgsync.synchronize.process_classifications',
+                 'nti.app.orgsync.synchronize.process_membership_logs',)
+    def test_sync(self, mock_cla, mock_pml):
+        mock_cla.is_callable().returns_fake()
+        mock_pml.is_callable().returns_fake()
+        successful = synchronize_orgsync()
         assert_that(successful, is_(True))
