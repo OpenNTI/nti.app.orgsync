@@ -60,6 +60,7 @@ setup(
         'nti.orgsync_rdbms',
         'nti.traversal',
         'pyramid',
+        'python-redis-lock',
         'six',
         'zope.cachedescriptors',
         'zope.component',
