@@ -58,6 +58,7 @@ setup(
         'setuptools',
         'nti.orgsync',
         'nti.orgsync_rdbms',
+        'nti.traversal',
         'pyramid',
         'six',
         'zope.cachedescriptors',

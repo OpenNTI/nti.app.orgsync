@@ -12,4 +12,7 @@
 			 factory=".OrgSyncPathAdapter"
 			 provides="zope.traversing.interfaces.IPathAdapter" />
 
+	<adapter factory="nti.traversal.traversal.DefaultAdapterTraversable"
+			 for=".OrgSyncPathAdapter pyramid.interfaces.IRequest" />
+
 </configure>
