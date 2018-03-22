@@ -1,9 +1,9 @@
 <!-- -*- mode: nxml -*- -->
 <configure	xmlns="http://namespaces.zope.org/zope"
 			xmlns:i18n="http://namespaces.zope.org/i18n"
-			xmlns:ext="http://nextthought.com/ntp/ext"
 			xmlns:zcml="http://namespaces.zope.org/zcml"
-			xmlns:runner="http://nextthought.com/ntp/sparkjobrunner">
+			xmlns:orgsync="http://nextthought.com/ntp/orgsync"
+			i18n_domain='nti.dataserver'>
 
 	<include package="zope.component" file="meta.zcml" />
 	<include package="zope.security" file="meta.zcml" />
@@ -11,9 +11,13 @@
 	<include package="zope.security" />
 	<include package="zope.location" />
 
-	<include package="nti.orgsync" />
 	<include package="nti.orgsync_rdbms" />
 
 	<include package=".views" />
+
+	<configure zcml:condition="have testmode">
+		<include package="nti.orgsync" file="meta.zcml" />
+		<orgsync:registerOrgSyncKey apiKey="abcd12345" />
+	</configure>
 
 </configure>

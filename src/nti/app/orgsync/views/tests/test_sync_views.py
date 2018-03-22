@@ -17,6 +17,7 @@ from nti.app.testing.decorators import WithSharedApplicationMockDS
 
 from nti.dataserver.tests import mock_dataserver
 
+
 class TestSyncViews(ApplicationLayerTest):
 
     layer = OrgSyncApplicationTestLayer
@@ -26,16 +27,15 @@ class TestSyncViews(ApplicationLayerTest):
     def test_sync(self, mock_sync):
         with mock_dataserver.mock_db_trans(self.ds):
             self._create_user("pgreazy")
-        
+
         unauthed_environ = self._make_extra_environ("pgreazy")
         self.testapp.post('/dataserver2/orgsync/@@sync',
                           extra_environ=unauthed_environ,
                           status=403)
 
-        mock_sync.is_callable().returns(False)
+        mock_sync.is_callable().returns_fake()
         self.testapp.post_json('/dataserver2/orgsync/@@sync',
-                               status=422)
-
-        mock_sync.is_callable().returns(True)
-        self.testapp.post_json('/dataserver2/orgsync/@@sync',
+                               {
+                                   'workers': 1,
+                               },
                                status=200)
