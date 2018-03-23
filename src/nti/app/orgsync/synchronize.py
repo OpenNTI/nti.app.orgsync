@@ -37,8 +37,7 @@ def synchronize_orgsync(start_date=None, end_date=None,
         # process always classifications
         process_classifications(key, db, timeout=timeout)
         # membership logs sync orgs and accounts
-        process_membership_logs(key, db,
-                                end_date=end_date,
-                                start_date=start_date,
-                                workers=workers, timeout=timeout)
-    return True
+        return process_membership_logs(key, db,
+                                       end_date=end_date,
+                                       start_date=start_date,
+                                       workers=workers, timeout=timeout)
