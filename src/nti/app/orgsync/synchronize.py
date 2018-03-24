@@ -34,7 +34,7 @@ def synchronize_orgsync(start_date=None, end_date=None,
     with get_redis_lock(SYNC_ORGSYNC_LOCK):
         key = component.getUtility(IOrgSyncKey)
         db = component.getUtility(IOrgSyncDatabase)
-        # process always classifications
+        # process classifications always
         process_classifications(key, db, timeout=timeout)
         # membership logs sync orgs and accounts
         return process_membership_logs(key, db,
