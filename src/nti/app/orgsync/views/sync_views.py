@@ -57,7 +57,7 @@ logger = __import__('logging').getLogger(__name__)
 class OrgSyncSyncView(AbstractAuthenticatedView,
                       ModeledContentUploadRequestUtilsMixin):
 
-    def readInput(self, value=None):  # pragma: no cover
+    def readInput(self, value=None):
         result = None
         if self.request.body:
             result = super(OrgSyncSyncView, self).readInput(value)
