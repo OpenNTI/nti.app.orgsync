@@ -50,7 +50,7 @@ class _OrganizationExternal(object):
         result[ID] = self.org.id
         result[MIMETYPE] = ORG_MIMETYPE
         for name in IOrganization:
-            if name is not ORG_IGNORE:
+            if name not in ORG_IGNORE:
                 result[name] = getattr(self.org, name, None)
         return result
 
@@ -67,6 +67,6 @@ class _AccountExternal(object):
         result[ID] = self.context.id
         result[MIMETYPE] = ACCOUNT_MIMETYPE
         for name in IAccount:
-            if name is not ACCT_IGNORE:
+            if name not in ACCT_IGNORE:
                 result[name] = getattr(self.context, name, None)
         return result
