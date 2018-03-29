@@ -13,13 +13,6 @@
 
 	<include package="nti.orgsync_rdbms" />
 
-	<include package=".views" />
-
-	<configure zcml:condition="have testmode">
-		<include package="nti.orgsync" file="meta.zcml" />
-		<orgsync:registerOrgSyncKey apiKey="abcd12345" />
-	</configure>
-
 	<!-- ACLs -->
 	<role id="role:nti.dataserver.orgsync"
 		  title="A OU orgsync role"
@@ -41,5 +34,17 @@
 			 for="nti.dataserver.interfaces.IUser"
 			 factory=".authorization.NextthoughtDotComOUOrgSyncAdmin"
 			 provides="nti.dataserver.interfaces.IGroupMember" />
+
+    <adapter factory=".acl._OrgACLProvider" />
+	<adapter factory=".acl._AccountACLProvider" />
+
+	<!-- Views -->
+	<include package=".views" />
+
+	<!-- Test OrgSyncKey -->
+	<configure zcml:condition="have testmode">
+		<include package="nti.orgsync" file="meta.zcml" />
+		<orgsync:registerOrgSyncKey apiKey="abcd12345" />
+	</configure>
 
 </configure>
