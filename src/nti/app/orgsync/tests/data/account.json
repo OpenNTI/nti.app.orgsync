@@ -1,0 +1,47 @@
+{
+	"id": 7170547,
+	"username": "jfazio@state-university",
+	"first_name": "Jason",
+	"last_name": "Travis",
+	"middle_initial": "P",
+	"phone_number": "(407) 574-2295",
+	"city": "Orlando",
+	"state": "FL",
+	"country": "US",
+	"last_login": "2017-08-19T03:15:36Z",
+	"about_me": "Hello! I am a senior on campus and the president of the Student Government Association!",
+	"address": "8167 International Dr",
+	"zip": "32819",
+	"email": "jfazio@state.edu",
+	"profile_responses": [
+		{
+			"element": {
+				"id": 2348958,
+				"name": "Classification",
+				"type": "Selection"
+			},
+			"data": {
+				"id": 3916084,
+				"name": "Faculty / Staff"
+			}
+		},
+		{
+			"element": {
+				"id": 2348960,
+				"name": "Major",
+				"type": "TextField"
+			},
+			"data": "Marketing"
+		}
+	],
+	"classifications": [
+		{
+			"id": 1262,
+			"name": "Students"
+		}
+ 	],
+	"pic_url": "https://orgsync.com/assets/icons/accounts/profile_pic_blank_64.gif",
+	"org_ids": [
+		152512
+	]
+}
