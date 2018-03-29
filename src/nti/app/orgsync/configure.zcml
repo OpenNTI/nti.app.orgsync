@@ -38,6 +38,10 @@
     <adapter factory=".acl._OrgACLProvider" />
 	<adapter factory=".acl._AccountACLProvider" />
 
+	<!-- Externalization -->
+	<adapter factory=".externalization._AccountExternal" />
+	<adapter factory=".externalization._OrganizationExternal" />
+
 	<!-- Views -->
 	<include package=".views" />
 
