@@ -20,4 +20,26 @@
 		<orgsync:registerOrgSyncKey apiKey="abcd12345" />
 	</configure>
 
+	<!-- ACLs -->
+	<role id="role:nti.dataserver.orgsync"
+		  title="A OU orgsync role"
+		  description="Role for orgsync objects."/>
+
+	<permission	id="nti.actions.orgsync.view_orgs"
+				title="View Orgs" />
+
+	<permission	id="nti.actions.orgsync.view_accounts"
+				title="View Accounts" />
+
+	<grant	permission="nti.actions.orgsync.view_orgs"
+			role="role:nti.dataserver.orgsync" />
+
+	<grant	permission="nti.actions.orgsync.view_accounts"
+			role="role:nti.dataserver.orgsync" />
+
+	<adapter name="NextthoughtDotComOUOrgSyncAdmin"
+			 for="nti.dataserver.interfaces.IUser"
+			 factory=".authorization.NextthoughtDotComOUOrgSyncAdmin"
+			 provides="nti.dataserver.interfaces.IGroupMember" />
+
 </configure>

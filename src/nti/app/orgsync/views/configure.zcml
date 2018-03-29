@@ -15,4 +15,14 @@
 	<adapter factory="nti.traversal.traversal.DefaultAdapterTraversable"
 			 for=".OrgSyncPathAdapter pyramid.interfaces.IRequest" />
 
+	<adapter name="orgs"
+			 for=".OrgSyncPathAdapter pyramid.interfaces.IRequest"
+			 factory=".OrgsPathAdapter"
+			 provides="zope.traversing.interfaces.IPathAdapter" />
+
+	<adapter name="accounts"
+			 for=".OrgSyncPathAdapter pyramid.interfaces.IRequest"
+			 factory=".AccountsPathAdapter"
+			 provides="zope.traversing.interfaces.IPathAdapter" />
+
 </configure>

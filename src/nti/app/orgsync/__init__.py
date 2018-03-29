@@ -13,3 +13,9 @@ MessageFactory = zope.i18nmessageid.MessageFactory(__name__)
 
 #: OrgSync Path adapter
 ORGSYNC = "orgsync"
+
+#: Organizations Path adapter
+ORGS = "orgs"
+
+#: Accounts Path adapter
+ACCOUNTS = "accounts"
