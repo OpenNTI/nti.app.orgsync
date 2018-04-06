@@ -18,6 +18,7 @@ from zope.location.interfaces import IContained
 
 from zope.traversing.interfaces import IPathAdapter
 
+from nti.app.orgsync import LOGS
 from nti.app.orgsync import ORGS
 from nti.app.orgsync import ORGSYNC
 from nti.app.orgsync import ACCOUNTS
@@ -83,3 +84,7 @@ class AccountsPathAdapter(PathAdapterMixin):
             if result is not None:
                 return result
         raise KeyError(key) if key else hexc.HTTPNotFound()
+
+
+class LogsPathAdapter(PathAdapterMixin):
+    __name__ = LOGS

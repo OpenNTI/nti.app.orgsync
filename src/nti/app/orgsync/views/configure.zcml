@@ -25,4 +25,9 @@
 			 factory=".AccountsPathAdapter"
 			 provides="zope.traversing.interfaces.IPathAdapter" />
 
+	<adapter name="logs"
+			 for=".OrgSyncPathAdapter pyramid.interfaces.IRequest"
+			 factory=".LogsPathAdapter"
+			 provides="zope.traversing.interfaces.IPathAdapter" />
+
 </configure>

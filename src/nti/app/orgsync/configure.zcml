@@ -27,6 +27,9 @@
 	<permission	id="nti.actions.orgsync.view_logs"
 				title="View Logs" />
 
+	<permission	id="nti.actions.orgsync.sync_db"
+				title="Sync Database" />
+
 	<grant	permission="nti.actions.orgsync.view_orgs"
 			role="role:nti.dataserver.orgsync" />
 
@@ -34,6 +37,9 @@
 			role="role:nti.dataserver.orgsync" />
 
 	<grant	permission="nti.actions.orgsync.view_logs"
+			role="role:nti.dataserver.orgsync" />
+
+	<grant	permission="nti.actions.orgsync.sync_db"
 			role="role:nti.dataserver.orgsync" />
 
 	<adapter name="NextthoughtDotComOUOrgSyncAdmin"

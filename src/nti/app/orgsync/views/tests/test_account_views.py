@@ -27,7 +27,7 @@ class TestAccountViews(ApplicationLayerTest):
 
     @WithSharedApplicationMockDS(testapp=True, users=True)
     @fudge.patch('nti.app.orgsync.views.get_account')
-    def test_sync(self, mock_sync):
+    def test_account(self, mock_sync):
         path = os.path.join(os.path.dirname(__file__), 'data',
                             "account.json")
         with codecs.open(path, "r", "UTF-8") as fp:
