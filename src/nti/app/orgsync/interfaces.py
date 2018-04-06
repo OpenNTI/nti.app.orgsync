@@ -25,3 +25,6 @@ ACT_VIEW_ORGS = Permission('nti.actions.orgsync.view_orgs')
 
 #: View accounts permission
 ACT_VIEW_ACCOUNTS = Permission('nti.actions.orgsync.view_accounts')
+
+#: View logs permission
+ACT_VIEW_LOGS = Permission('nti.actions.orgsync.view_logs')

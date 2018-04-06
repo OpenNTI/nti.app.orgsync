@@ -24,10 +24,16 @@
 	<permission	id="nti.actions.orgsync.view_accounts"
 				title="View Accounts" />
 
+	<permission	id="nti.actions.orgsync.view_logs"
+				title="View Logs" />
+
 	<grant	permission="nti.actions.orgsync.view_orgs"
 			role="role:nti.dataserver.orgsync" />
 
 	<grant	permission="nti.actions.orgsync.view_accounts"
+			role="role:nti.dataserver.orgsync" />
+
+	<grant	permission="nti.actions.orgsync.view_logs"
 			role="role:nti.dataserver.orgsync" />
 
 	<adapter name="NextthoughtDotComOUOrgSyncAdmin"
@@ -37,10 +43,12 @@
 
     <adapter factory=".acl._OrgACLProvider" />
 	<adapter factory=".acl._AccountACLProvider" />
+	<adapter factory=".acl._MembershipLogACLProvider" />
 
 	<!-- Externalization -->
 	<adapter factory=".externalization._AccountExternal" />
 	<adapter factory=".externalization._OrganizationExternal" />
+	<adapter factory=".externalization._MembershipLogExternal" />
 
 	<!-- Views -->
 	<include package=".views" />
