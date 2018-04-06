@@ -27,7 +27,7 @@ class TestOrgViews(ApplicationLayerTest):
 
     @WithSharedApplicationMockDS(testapp=True, users=True)
     @fudge.patch('nti.app.orgsync.views.get_organization')
-    def test_sync(self, mock_sync):
+    def test_organization(self, mock_sync):
         path = os.path.join(os.path.dirname(__file__), 'data',
                             "organization.json")
         with codecs.open(path, "r", "UTF-8") as fp:
