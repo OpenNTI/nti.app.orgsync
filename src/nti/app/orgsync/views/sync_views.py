@@ -30,11 +30,11 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
+from nti.app.orgsync.interfaces import ACT_SYNC_DB
+
 from nti.app.orgsync.synchronize import synchronize_orgsync
 
 from nti.app.orgsync.views import OrgSyncPathAdapter
-
-from nti.dataserver import authorization as nauth
 
 from nti.orgsync.client import DEFAULT_MAX_WORKERS
 
@@ -51,7 +51,7 @@ logger = __import__('logging').getLogger(__name__)
 @view_config(name="synchronize")
 @view_defaults(route_name="objects.generic.traversal",
                renderer="rest",
-               permission=nauth.ACT_NTI_ADMIN,
+               permission=ACT_SYNC_DB,
                context=OrgSyncPathAdapter,
                request_method="POST")
 class OrgSyncSyncView(AbstractAuthenticatedView,
