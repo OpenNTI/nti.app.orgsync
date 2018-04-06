@@ -19,3 +19,6 @@ ORGS = "orgs"
 
 #: Accounts Path adapter
 ACCOUNTS = "accounts"
+
+#: Logs Path adapter
+LOGS = "logs"
