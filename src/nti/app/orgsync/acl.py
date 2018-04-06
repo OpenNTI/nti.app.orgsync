@@ -27,6 +27,8 @@ from nti.dataserver.interfaces import IACLProvider
 
 from nti.orgsync.accounts.interfaces import IAccount
 
+from nti.orgsync.entries.interfaces import IMembershipLog
+
 from nti.orgsync.organizations.interfaces import IOrganization
 
 logger = __import__('logging').getLogger(__name__)
@@ -56,4 +58,9 @@ class _OrgACLProvider(_ACLProviderMixin):
 
 @component.adapter(IAccount)
 class _AccountACLProvider(_ACLProviderMixin):
+    pass
+
+
+@component.adapter(IMembershipLog)
+class _MembershipLogACLProvider(_ACLProviderMixin):
     pass
