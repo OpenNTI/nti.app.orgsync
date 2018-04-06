@@ -20,6 +20,10 @@ from nti.orgsync.accounts import ACCOUNT_MIMETYPE
 
 from nti.orgsync.accounts.interfaces import IAccount
 
+from nti.orgsync.entries import MEMBERSHIP_LOG_MIMETYPE
+
+from nti.orgsync.entries.interfaces import IMembershipLog
+
 from nti.orgsync.organizations import ORG_MIMETYPE
 
 from nti.orgsync.organizations.interfaces import IOrganization
@@ -27,6 +31,8 @@ from nti.orgsync.organizations.interfaces import IOrganization
 from nti.orgsync_rdbms.accounts.interfaces import IStorableAccount
 
 from nti.orgsync_rdbms.accounts.alchemy import IGNORE as ACCT_IGNORE
+
+from nti.orgsync_rdbms.entries.interfaces import IStorableMembershipLog
 
 from nti.orgsync_rdbms.organizations.alchemy import IGNORE as ORG_IGNORE
 
@@ -69,4 +75,20 @@ class _AccountExternal(object):
         for name in IAccount:
             if name not in ACCT_IGNORE:
                 result[name] = getattr(self.context, name, None)
+        return result
+
+
+@interface.implementer(IExternalObject)
+@component.adapter(IStorableMembershipLog)
+class _MembershipLogExternal(object):
+
+    def __init__(self, context):
+        self.context = context
+
+    def toExternalObject(self, **unused_kwargs):
+        result = LocatedExternalDict()
+        result[ID] = self.context.id
+        result[MIMETYPE] = MEMBERSHIP_LOG_MIMETYPE
+        for name in IMembershipLog:
+            result[name] = getattr(self.context, name, None)
         return result
