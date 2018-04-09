@@ -9,6 +9,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 from pyramid.view import view_config
+from pyramid.view import view_defaults
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
@@ -18,14 +19,17 @@ from nti.externalization.externalization import to_external_object
 
 from nti.orgsync.accounts.interfaces import IAccount
 
+from nti.orgsync_rdbms.accounts.interfaces import IStorableAccount
+
 logger = __import__('logging').getLogger(__name__)
 
 
-@view_config(route_name="objects.generic.traversal",
-             renderer="rest",
-             permission=ACT_VIEW_ACCOUNTS,
-             context=IAccount,
-             request_method="GET")
+@view_config(context=IAccount)
+@view_config(context=IStorableAccount)
+@view_defaults(route_name="objects.generic.traversal",
+               renderer="rest",
+               permission=ACT_VIEW_ACCOUNTS,
+               request_method="GET")
 class AccountView(AbstractAuthenticatedView):
 
     def __call__(self):
