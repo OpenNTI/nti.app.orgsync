@@ -26,11 +26,11 @@ class TestSync(ApplicationLayerTest):
     layer = OrgSyncApplicationTestLayer
 
     @fudge.patch('nti.app.orgsync.synchronize.get_redis_lock',
-                 'nti.app.orgsync.synchronize.process_membership_logs',
+                 'nti.app.orgsync.synchronize.process_classifications',
                  'nti.app.orgsync.synchronize.process_membership_logs',)
     def test_sync(self, mock_lock, mock_cla, mock_pml):
-        mock_cla.is_callable().returns_fake()
-        mock_pml.is_callable().returns_fake()
+        mock_cla.is_callable().returns(True)
+        mock_pml.is_callable().returns(True)
         mock_lock.is_callable().returns(NoOpCM())
         successful = synchronize_orgsync()
         assert_that(successful, is_(True))
