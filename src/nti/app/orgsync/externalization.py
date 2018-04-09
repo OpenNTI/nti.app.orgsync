@@ -45,25 +45,11 @@ logger = __import__('logging').getLogger(__name__)
 
 
 @interface.implementer(IExternalObject)
-@component.adapter(IStorableOrganization)
-class _OrganizationExternal(object):
-
-    def __init__(self, org):
-        self.org = org
-
-    def toExternalObject(self, **unused_kwargs):
-        result = LocatedExternalDict()
-        result[ID] = self.org.id
-        result[MIMETYPE] = ORG_MIMETYPE
-        for name in IOrganization:
-            if name not in ORG_IGNORE:
-                result[name] = getattr(self.org, name, None)
-        return result
-
-
-@component.adapter(IStorableAccount)
-@interface.implementer(IExternalObject)
-class _AccountExternal(object):
+class _StorableExternal(object):
+    
+    IGNORE = ()
+    interface = ()
+    mimeType = None
 
     def __init__(self, context):
         self.context = context
@@ -71,24 +57,28 @@ class _AccountExternal(object):
     def toExternalObject(self, **unused_kwargs):
         result = LocatedExternalDict()
         result[ID] = self.context.id
-        result[MIMETYPE] = ACCOUNT_MIMETYPE
-        for name in IAccount:
-            if name not in ACCT_IGNORE:
+        result[MIMETYPE] = self.mimeType
+        for name in self.interface:
+            if name not in self.IGNORE:
                 result[name] = getattr(self.context, name, None)
         return result
 
 
-@interface.implementer(IExternalObject)
+@component.adapter(IStorableOrganization)
+class _OrganizationExternal(_StorableExternal):
+    IGNORE = ORG_IGNORE
+    mimeType = ORG_MIMETYPE
+    interface = IOrganization
+
+
+@component.adapter(IStorableAccount)
+class _AccountExternal(_StorableExternal):
+    IGNORE = ACCT_IGNORE
+    interface = IAccount
+    mimeType = ACCOUNT_MIMETYPE
+
+
 @component.adapter(IStorableMembershipLog)
-class _MembershipLogExternal(object):
-
-    def __init__(self, context):
-        self.context = context
-
-    def toExternalObject(self, **unused_kwargs):
-        result = LocatedExternalDict()
-        result[ID] = self.context.id
-        result[MIMETYPE] = MEMBERSHIP_LOG_MIMETYPE
-        for name in IMembershipLog:
-            result[name] = getattr(self.context, name, None)
-        return result
+class _MembershipLogExternal(_StorableExternal):
+    interface = IMembershipLog
+    mimeType = MEMBERSHIP_LOG_MIMETYPE
