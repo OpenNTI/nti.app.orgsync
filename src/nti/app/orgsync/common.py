@@ -8,6 +8,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+from redis_lock import AlreadyAcquired
 from redis_lock import Lock as RedisLock
 
 from zope import component
@@ -30,6 +31,18 @@ def redis_client():
 
 def get_redis_lock(name, expire=DEFAULT_LOCK_EXPIRY_TIME, strict=False):
     return RedisLock(redis_client(), name, expire, strict=strict)
+
+
+def is_locked_held(name):
+    result = True
+    lock = get_redis_lock(name)
+    try:
+        if lock.acquire(False):
+            lock.release()
+            result = False
+    except AlreadyAcquired:
+        pass
+    return result
 
 
 def get_organization(org_id, apiKey=None):

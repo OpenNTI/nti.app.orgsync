@@ -11,6 +11,16 @@
 	<include package="zope.security" />
 	<include package="zope.location" />
 
+	<!-- This should happen early -->
+	<include package="nti.app.pyramid_zope" />
+
+	<include package="z3c.baseregistry" file="meta.zcml"/>
+	<include package="z3c.macro" file="meta.zcml"/>
+	<include package="z3c.macro" />
+
+	<!-- z3c:template/layout -->
+	<include package="z3c.template" file="meta.zcml" />
+
 	<include package="nti.orgsync_rdbms" />
 
 	<!-- ACLs -->
