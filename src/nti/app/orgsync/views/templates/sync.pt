@@ -27,7 +27,11 @@
 				<label id="last_entry" tal:content="options/last_entry"></label>
 			</div>
 			<form class="form-horizontal" action="" method="" id="sync_form">
-				<button type="button" data-toggle="modal" data-target="#syncModal">Synchronize</button>
+				<button type="button" data-toggle="modal" data-target="#syncModal"
+						tal:condition="python: not options['lock_held']">Synchronize</button>
+				<div tal:condition="python: options['lock_held']">
+					<b><font color="red">Sync in progress.</font></b>
+				</div>
 			</form>
 		</div>
 		<div class="modal fade" id="syncModal" role="dialog"
