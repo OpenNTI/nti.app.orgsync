@@ -67,17 +67,20 @@ class OrgSyncSyncView(AbstractAuthenticatedView,
     def database(self):
         return component.getUtility(IOrgSyncDatabase)
 
+    @Lazy
+    def latest(self):
+        session = getattr(self.database, 'session', self.database)
+        # pylint: disable=no-member
+        entries = aliased(MembershipLog)
+        return session.query(func.max(entries.created_at)).scalar()
+
     def __call__(self):
         data = self.readInput()
         end_date = parse_date(data.get('endDate'))
         start_date = parse_date(data.get('startDate'))
         if end_date is None:
-            end_date = datetime.now()
-        if start_date is None:
-            session = getattr(self.database,  'session', self.database)
-            # pylint: disable=no-member
-            entries = aliased(MembershipLog)
-            start_date = session.query(func.max(entries.created_at)).scalar()
+            end_date = self.latest
+            end_date = datetime.now() if not end_date else end_date + timedelta(days=7)
         if start_date is None:
             start_date = end_date - timedelta(days=7)
         workers = int(data.get('workers') or DEFAULT_MAX_WORKERS)
