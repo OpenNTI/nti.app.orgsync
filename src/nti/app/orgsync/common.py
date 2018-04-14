@@ -40,7 +40,7 @@ def is_locked_held(name):
         if lock.acquire(False):
             lock.release()
             result = False
-    except AlreadyAcquired:  # pragma: no cover
+    except AlreadyAcquired:
         pass
     return result
 
