@@ -92,6 +92,7 @@ class OrgSyncSyncView(AbstractAuthenticatedView,
             start_date = end_date - timedelta(days=7)
         workers = int(data.get('workers') or DEFAULT_MAX_WORKERS)
         synchronize_orgsync(start_date, end_date, workers)
+        logger.info("Synchronization completed")
         return hexc.HTTPOk()
 
 
@@ -107,39 +108,41 @@ class SynchronizationView(AbstractAuthenticatedView):
     def database(self):
         return component.getUtility(IOrgSyncDatabase)
 
-    @Lazy
+    @property
     def accounts(self):
         session = getattr(self.database, 'session', self.database)
         return session.query(Account).count()
 
-    @Lazy
+    @property
     def organizations(self):
         session = getattr(self.database, 'session', self.database)
         return session.query(Organization).count()
 
-    @Lazy
+    @property
     def entries(self):
         session = getattr(self.database, 'session', self.database)
         return session.query(MembershipLog).count()
 
-    @Lazy
-    def latest(self):
+    @property
+    def last_entry(self):
         session = getattr(self.database, 'session', self.database)
         # pylint: disable=no-member
         entries = aliased(MembershipLog)
-        return session.query(func.max(entries.created_at)).scalar()
+        result = session.query(func.max(entries.created_at)).scalar()
+        if result is not None:
+            result = isodate.datetime_isoformat(result,
+                                                isodate.DATE_EXT_COMPLETE)
+        return result
 
     def __call__(self):
         # exclude final forward slash for join
         context_url = self.request.resource_url(self.context)[:-1]
         sync_url = "/".join((context_url, '@@sync'))
-        last_entry = isodate.datetime_isoformat(self.latest,
-                                                isodate.DATE_EXT_COMPLETE)
         result = {
             'sync_url': sync_url,
             'entries': self.entries,
             'accounts': self.accounts,
-            'last_entry': last_entry,
+            'last_entry': self.last_entry,
             'lock_held': is_sync_lock_held(),
             'organizations': self.organizations,
         }
