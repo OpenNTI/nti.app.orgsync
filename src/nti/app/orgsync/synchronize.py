@@ -11,6 +11,7 @@ from __future__ import absolute_import
 from zope import component
 
 from nti.app.orgsync.common import get_redis_lock
+from nti.app.orgsync.common import is_locked_held
 
 from nti.orgsync.client import DEFAULT_TIMEOUT
 from nti.orgsync.client import DEFAULT_MAX_WORKERS
@@ -26,6 +27,10 @@ from nti.orgsync_rdbms.synchronize.synchronize import process_membership_logs
 SYNC_ORGSYNC_LOCK = '++etc++orgsync++sync++lock'
 
 logger = __import__('logging').getLogger(__name__)
+
+
+def is_sync_lock_held():
+    return is_locked_held(SYNC_ORGSYNC_LOCK)
 
 
 def synchronize_orgsync(start_date=None, end_date=None,
