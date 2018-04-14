@@ -34,13 +34,15 @@ def get_redis_lock(name, expire=DEFAULT_LOCK_EXPIRY_TIME, strict=False):
 
 
 def is_locked_held(name):
+    result = True
     lock = get_redis_lock(name)
     try:
-        lock.acquire(False)
-        lock.release()
-        return False
+        if lock.acquire(False):
+            lock.release()
+            result = False
     except AlreadyAcquired:  # pragma: no cover
-        return True
+        pass
+    return result
 
 
 def get_organization(org_id, apiKey=None):
