@@ -83,8 +83,10 @@ class OrgSyncSyncView(AbstractAuthenticatedView,
 
     def __call__(self):
         data = self.readInput()
-        end_date = parse_date(data.get('endDate'))
-        start_date = parse_date(data.get('startDate'))
+        end_date = data.get('endDate') or None
+        end_date = parse_date(end_date) if end_date else None
+        start_date = data.get('startDate') or None
+        start_date = parse_date(start_date) if start_date else None
         if end_date is None:
             end_date = self.latest or datetime.now()
             end_date = end_date + timedelta(days=7)

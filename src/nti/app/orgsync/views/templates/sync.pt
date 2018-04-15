@@ -91,6 +91,9 @@
 			function doSync() {
 				// Get URL
 				var url = $('#syncModal').attr('url');
+				// Get Values
+				var endDate = document.getElementById('target_end_date').value;
+				var startDate = document.getElementById('target_begin_date').value;
 				// Run job
 				return new Promise((success, failed) => {
 					document.getElementById("cancel_sync_button").setAttribute('disabled', true);
@@ -98,7 +101,10 @@
 					$.ajax({
 						url: url,
 						method: 'POST',
-						data: {},
+						data: JSON.stringify({
+							"endDate": endDate,
+							"startDate": startDate
+						}),
 						success: function(data, status, jqXHR) {
 							success();
 						},
