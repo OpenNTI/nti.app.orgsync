@@ -12,8 +12,6 @@ from hamcrest import none
 from hamcrest import is_not
 from hamcrest import assert_that
 
-import unittest
-
 import fudge
 
 from redis_lock import AlreadyAcquired
@@ -23,8 +21,16 @@ from nti.app.orgsync.common import get_redis_lock
 from nti.app.orgsync.common import is_locked_held
 from nti.app.orgsync.common import get_organization
 
+from nti.app.orgsync.tests import OrgSyncApplicationTestLayer
 
-class TestCommon(unittest.TestCase):
+from nti.app.testing.application_webtest import ApplicationLayerTest
+
+from nti.app.testing.decorators import WithSharedApplicationMockDS
+
+
+class TestCommon(ApplicationLayerTest):
+
+    layer = OrgSyncApplicationTestLayer
 
     @fudge.patch('nti.app.orgsync.common.RedisLock')
     def test_get_redis_lock(self, mock_rl):
@@ -44,12 +50,14 @@ class TestCommon(unittest.TestCase):
         mock_ac.is_callable().raises(AlreadyAcquired)
         assert_that(is_locked_held('foo'), is_(True))
 
-    @fudge.patch('nti.app.orgsync.common.AccountClient.get_account')
+    @WithSharedApplicationMockDS
+    @fudge.patch('nti.app.orgsync.common.load_account')
     def test_get_account(self, mock_ga):
         mock_ga.is_callable().returns_fake()
         assert_that(get_account('foo'), is_not(none()))
-
-    @fudge.patch('nti.app.orgsync.common.OrgClient.get_organization')
+    
+    @WithSharedApplicationMockDS
+    @fudge.patch('nti.app.orgsync.common.load_organization')
     def test_get_organization(self, mock_go):
         mock_go.is_callable().returns_fake()
         assert_that(get_organization('foo'), is_not(none()))
