@@ -15,9 +15,11 @@ from zope import component
 
 from nti.coremetadata.interfaces import IRedisClient
 
-from nti.orgsync.accounts.client import Client as AccountClient
+from nti.orgsync_rdbms.accounts.alchemy import load_account
 
-from nti.orgsync.organizations.client import Client as OrgClient
+from nti.orgsync_rdbms.database.interfaces import IOrgSyncDatabase
+
+from nti.orgsync_rdbms.organizations.alchemy import load_organization
 
 #: Lock expire time 1.5(hr)
 DEFAULT_LOCK_EXPIRY_TIME = 5400
@@ -45,11 +47,11 @@ def is_locked_held(name):
     return result
 
 
-def get_organization(org_id, apiKey=None):
-    client = OrgClient(apiKey)
-    return client.get_organization(org_id)
+def get_organization(org_id, db=None):
+    db = component.getUtility(IOrgSyncDatabase) if db is None else db
+    return load_organization(db, org_id)
 
 
-def get_account(account_id, apiKey=None):
-    client = AccountClient(apiKey)
-    return client.get_account(account_id)
+def get_account(account_id, db=None):
+    db = component.getUtility(IOrgSyncDatabase) if db is None else db
+    return load_account(db, account_id)
