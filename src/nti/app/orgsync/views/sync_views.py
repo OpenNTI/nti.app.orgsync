@@ -140,7 +140,7 @@ class SynchronizationView(AbstractAuthenticatedView):
     def __call__(self):
         # exclude final forward slash for join
         context_url = self.request.resource_url(self.context)[:-1]
-        sync_url = "/".join((context_url, '@@sync'))
+        sync_url = "/".join((context_url, '@@synchronize'))
         result = {
             'sync_url': sync_url,
             'entries': self.entries,
