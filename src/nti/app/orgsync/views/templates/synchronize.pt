@@ -9,31 +9,28 @@
 		</metal:slot>
 	</head>
 	<body>
-		<div class="col-sm-offset-1">
-			<div>
-				<label>Accounts:</label>
-				<label id="accounts" tal:content="options/accounts">0</label>
+		<table style="width:40%">
+			<tr>
+		    	<td><b>Accounts</b></td>
+		    	<td><b>Organizations</b></td> 
+		    	<td><b>Entries</b></td>
+		    	<td><b>Last Entry</b></td>
+		  	</tr>
+		  	<tr>
+		    	<td tal:content="options/accounts">0</td>
+		    	<td tal:content="options/organizations">0</td> 
+		    	<td tal:content="options/entries">0</td>
+		    	<td tal:content="options/last_entry"></td>
+		  	</tr>
+		</table>
+		<p/>
+		<form class="form-horizontal" action="" method="" id="sync_form">
+			<button type="button" data-toggle="modal" data-target="#syncModal"
+					tal:condition="python: not options['lock_held']">Synchronize</button>
+			<div tal:condition="python: options['lock_held']">
+				<b><font color="red">Sync in progress.</font></b>
 			</div>
-			<div>
-				<label>Organizations:</label>
-				<label id="organizations" tal:content="options/organizations">0</label>
-			</div>
-			<div>
-				<label>Entries:</label>
-				<label id="entries" tal:content="options/entries">0</label>
-			</div>
-			<div>
-				<label>Last Entry:</label>
-				<label id="last_entry" tal:content="options/last_entry"></label>
-			</div>
-			<form class="form-horizontal" action="" method="" id="sync_form">
-				<button type="button" data-toggle="modal" data-target="#syncModal"
-						tal:condition="python: not options['lock_held']">Synchronize</button>
-				<div tal:condition="python: options['lock_held']">
-					<b><font color="red">Sync in progress.</font></b>
-				</div>
-			</form>
-		</div>
+		</form>
 		<div class="modal fade" id="syncModal" role="dialog"
 			tal:attributes="url options/sync_url" >
 			<div class="modal-dialog">
