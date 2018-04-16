@@ -34,7 +34,7 @@ class TestSyncViews(ApplicationLayerTest):
                           status=403)
 
         mock_sync.is_callable().returns_fake()
-        self.testapp.post_json('/dataserver2/orgsync/@@sync',
+        self.testapp.post_json('/dataserver2/orgsync/@@synchronize',
                                {
                                    'workers': 1,
                                },
@@ -44,5 +44,5 @@ class TestSyncViews(ApplicationLayerTest):
     @fudge.patch('nti.app.orgsync.views.sync_views.is_sync_lock_held')
     def test_synchronization(self, mokc_ilh):
         mokc_ilh.is_callable().returns(False)
-        self.testapp.get('/dataserver2/orgsync/@@synchronization',
+        self.testapp.get('/dataserver2/orgsync/@@synchronize',
                         status=200)

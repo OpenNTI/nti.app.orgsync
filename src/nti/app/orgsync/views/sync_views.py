@@ -98,10 +98,11 @@ class OrgSyncSyncView(AbstractAuthenticatedView,
         return hexc.HTTPOk()
 
 
+@view_config(name="sync")
+@view_config(name="synchronize")
 @view_config(context=OrgSyncPathAdapter)
 @view_defaults(route_name="objects.generic.traversal",
-               renderer="templates/sync.pt",
-               name="synchronization",
+               renderer="templates/synchronize.pt",
                request_method="GET",
                permission=ACT_SYNC_DB)
 class SynchronizationView(AbstractAuthenticatedView):
