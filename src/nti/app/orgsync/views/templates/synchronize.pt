@@ -23,6 +23,7 @@
 		    	<td tal:content="options/last_entry"></td>
 		  	</tr>
 		</table>
+		<p/>
 		<form class="form-horizontal" action="" method="" id="sync_form">
 			<button type="button" data-toggle="modal" data-target="#syncModal"
 					tal:condition="python: not options['lock_held']">Synchronize</button>
