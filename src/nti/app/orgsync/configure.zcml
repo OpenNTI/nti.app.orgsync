@@ -57,7 +57,7 @@
 			 factory=".authorization.NextthoughtDotComOUOrgSyncAdmin"
 			 provides="nti.dataserver.interfaces.IGroupMember" />
 
-    <adapter factory=".acl._OrgSyncObjectACLProvider" />
+	<adapter factory=".acl._OrgSyncObjectACLProvider" />
 	<adapter factory=".acl._StorableObjectACLProvider" />
 
 	<!-- Externalization -->
