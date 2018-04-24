@@ -32,7 +32,6 @@ from nti.orgsync_rdbms.accounts.interfaces import IStorableAccount
 
 ITEMS = StandardExternalFields.ITEMS
 TOTAL = StandardExternalFields.TOTAL
-ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 
 logger = __import__('logging').getLogger(__name__)
 
