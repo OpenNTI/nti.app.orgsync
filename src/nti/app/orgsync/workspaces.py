@@ -21,6 +21,7 @@ from nti.app.orgsync import LOGS
 from nti.app.orgsync import ORGS
 from nti.app.orgsync import ORGSYNC
 from nti.app.orgsync import ACCOUNTS
+from nti.app.orgsync import LAST_ENTRY
 from nti.app.orgsync import SYNCHRONIZE
 
 from nti.app.orgsync.authorization import is_orsync_admin
@@ -66,9 +67,10 @@ class _OrgSyncWorkspace(Contained):
     def root(self):
         return get_ds2()
 
-    def create_link(self, name, method='GET'):
+    def create_link(self, name, elements=(), method='GET', rel=None):
         href = '/%s/%s/%s' % (self.root, ORGSYNC, name)
-        link = Link(href, rel=name, elements=(), method=method)
+        link = Link(href, rel=rel or name, elements=elements,
+                    method=method)
         link.__name__ = ''
         interface.alsoProvides(link, ILocation)
         return link
@@ -98,12 +100,14 @@ class _OrgSyncWorkspace(Contained):
         result = []
         if self.can_view_logs:
             result.append(self.create_link(LOGS))
+            result.append(self.create_link(LOGS, rel=LAST_ENTRY,
+                                           elements=('@@' + LAST_ENTRY,)))
         if self.can_view_orgs:
             result.append(self.create_link(ORGS))
         if self.can_view_accounts:
             result.append(self.create_link(ACCOUNTS))
         if self.can_sync_db:
-            result.append(self.create_link(SYNCHRONIZE, 'POST'))
+            result.append(self.create_link(SYNCHRONIZE, method='POST'))
         return result
 
 

@@ -10,9 +10,16 @@ from __future__ import absolute_import
 
 import six
 
-from requests.structures import CaseInsensitiveDict
+from pyramid import httpexceptions as hexc
 
 from pyramid.view import view_config
+from pyramid.view import view_defaults
+
+from requests.structures import CaseInsensitiveDict
+
+from sqlalchemy import func
+
+from sqlalchemy.orm import aliased
 
 from zope import component
 
@@ -20,12 +27,15 @@ from zope.cachedescriptors.property import Lazy
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
+from nti.app.orgsync import LAST_ENTRY
+
 from nti.app.orgsync.interfaces import ACT_VIEW_LOGS
 
 from nti.app.orgsync.views import LogsPathAdapter
 
 from nti.orgsync_rdbms.database.interfaces import IOrgSyncDatabase
 
+from nti.orgsync_rdbms.entries.alchemy import MembershipLog
 from nti.orgsync_rdbms.entries.alchemy import get_membership_logs
 
 from nti.orgsync_rdbms.utils import parse_date
@@ -54,6 +64,33 @@ class MembershipLogsView(AbstractAuthenticatedView):
         accounts = values.get('account') or values.get('accounts')
         if isinstance(accounts, six.string_types):
             accounts = accounts.split(',')
-        result = get_membership_logs(self.database, start_date, 
+        result = get_membership_logs(self.database, start_date,
                                      end_date, orgs, accounts)
         return result
+
+
+@view_config(name="lastentry")
+@view_config(name=LAST_ENTRY)
+@view_defaults(route_name="objects.generic.traversal",
+               renderer="rest",
+               permission=ACT_VIEW_LOGS,
+               context=LogsPathAdapter,
+               request_method="GET")
+class LastEntryView(AbstractAuthenticatedView):
+
+    @Lazy
+    def database(self):
+        return component.getUtility(IOrgSyncDatabase)
+
+    @Lazy
+    def latest(self):
+        session = getattr(self.database, 'session', self.database)
+        # pylint: disable=no-member
+        entries = aliased(MembershipLog)
+        return session.query(func.max(entries.created_at)).scalar()
+
+    def __call__(self):
+        end_date = self.latest
+        if end_date is None:  # pragma: no cover
+            raise hexc.HTTPNotFound()
+        return end_date

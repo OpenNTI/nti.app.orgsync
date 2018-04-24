@@ -25,3 +25,6 @@ LOGS = "logs"
 
 #: Sync view
 SYNCHRONIZE = 'synchronize'
+
+#: Last entry view
+LAST_ENTRY = 'last_entry'
