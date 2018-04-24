@@ -28,3 +28,13 @@ class NextthoughtDotComOUOrgSyncAdmin(object):
         if context.username.endswith('@nextthought.com'):
             groups = (RID_ORGSYNC,)
         self.groups = groups
+
+
+def is_orsync_admin(user):
+    """
+    Returns whether the user has the `RID_ORGSYNC` role.
+    """
+    for _, adapter in component.getAdapters((user,), IGroupMember):
+        if adapter.groups and RID_ORGSYNC in adapter.groups:
+            return True
+    return False
