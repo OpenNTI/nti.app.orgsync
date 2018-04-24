@@ -61,6 +61,10 @@
 	<adapter factory=".acl._AccountACLProvider" />
 	<adapter factory=".acl._MembershipLogACLProvider" />
 
+	<adapter factory=".acl._StorableOrgACLProvider" />
+	<adapter factory=".acl._StorableAccountACLProvider" />
+	<adapter factory=".acl._StorableMembershipLogACLProvider" />
+	
 	<!-- Externalization -->
 	<adapter factory=".externalization._AccountExternal" />
 	<adapter factory=".externalization._OrganizationExternal" />

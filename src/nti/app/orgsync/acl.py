@@ -31,6 +31,12 @@ from nti.orgsync.entries.interfaces import IMembershipLog
 
 from nti.orgsync.organizations.interfaces import IOrganization
 
+from nti.orgsync_rdbms.accounts.interfaces import IStorableAccount
+
+from nti.orgsync_rdbms.entries.interfaces import IStorableMembershipLog
+
+from nti.orgsync_rdbms.organizations.interfaces import IStorableOrganization
+
 logger = __import__('logging').getLogger(__name__)
 
 
@@ -56,11 +62,26 @@ class _OrgACLProvider(_ACLProviderMixin):
     pass
 
 
+@component.adapter(IStorableOrganization)
+class _StorableOrgACLProvider(_ACLProviderMixin):
+    pass
+
+
 @component.adapter(IAccount)
 class _AccountACLProvider(_ACLProviderMixin):
     pass
 
 
+@component.adapter(IStorableAccount)
+class _StorableAccountACLProvider(_ACLProviderMixin):
+    pass
+
+
 @component.adapter(IMembershipLog)
 class _MembershipLogACLProvider(_ACLProviderMixin):
+    pass
+
+
+@component.adapter(IStorableMembershipLog)
+class _StorableMembershipLogACLProvider(_ACLProviderMixin):
     pass
