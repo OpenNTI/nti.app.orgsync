@@ -25,17 +25,9 @@ from nti.dataserver.interfaces import ALL_PERMISSIONS
 
 from nti.dataserver.interfaces import IACLProvider
 
-from nti.orgsync.accounts.interfaces import IAccount
+from nti.orgsync.interfaces import IOrgSyncObject
 
-from nti.orgsync.entries.interfaces import IMembershipLog
-
-from nti.orgsync.organizations.interfaces import IOrganization
-
-from nti.orgsync_rdbms.accounts.interfaces import IStorableAccount
-
-from nti.orgsync_rdbms.entries.interfaces import IStorableMembershipLog
-
-from nti.orgsync_rdbms.organizations.interfaces import IStorableOrganization
+from nti.orgsync_rdbms.interfaces import IStorableObject
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -57,31 +49,11 @@ class _ACLProviderMixin(object):
         return acl
 
 
-@component.adapter(IOrganization)
-class _OrgACLProvider(_ACLProviderMixin):
+@component.adapter(IOrgSyncObject)
+class _OrgSyncObjectACLProvider(_ACLProviderMixin):
     pass
 
 
-@component.adapter(IStorableOrganization)
-class _StorableOrgACLProvider(_ACLProviderMixin):
-    pass
-
-
-@component.adapter(IAccount)
-class _AccountACLProvider(_ACLProviderMixin):
-    pass
-
-
-@component.adapter(IStorableAccount)
-class _StorableAccountACLProvider(_ACLProviderMixin):
-    pass
-
-
-@component.adapter(IMembershipLog)
-class _MembershipLogACLProvider(_ACLProviderMixin):
-    pass
-
-
-@component.adapter(IStorableMembershipLog)
-class _StorableMembershipLogACLProvider(_ACLProviderMixin):
+@component.adapter(IStorableObject)
+class _StorableObjectACLProvider(_ACLProviderMixin):
     pass
