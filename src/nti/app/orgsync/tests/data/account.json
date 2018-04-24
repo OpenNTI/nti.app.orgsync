@@ -16,22 +16,27 @@
 	"profile_responses": [
 		{
 			"element": {
-				"id": 2348958,
-				"name": "Classification",
-				"type": "Selection"
-			},
-			"data": {
-				"id": 3916084,
-				"name": "Faculty / Staff"
-			}
-		},
-		{
-			"element": {
 				"id": 2348960,
 				"name": "Major",
 				"type": "TextField"
 			},
 			"data": "Marketing"
+		},
+		{
+            "data": "112879506",
+            "element": {
+                "type": "TextField",
+                "id": 883029,
+                "name": "OUID"
+            }
+		},
+		{
+		    "data": "trav0000",
+		    "element": {
+		        "type": "TextField",
+		        "id": 883030,
+		        "name": "OU 4X4"
+		    }
 		}
 	],
 	"classifications": [

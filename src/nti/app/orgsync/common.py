@@ -11,14 +11,18 @@ from __future__ import absolute_import
 from redis_lock import AlreadyAcquired
 from redis_lock import Lock as RedisLock
 
+from sqlalchemy.orm import aliased
+
 from zope import component
 
 from nti.coremetadata.interfaces import IRedisClient
 
+from nti.orgsync_rdbms.accounts.alchemy import Account
 from nti.orgsync_rdbms.accounts.alchemy import load_account
 
 from nti.orgsync_rdbms.database.interfaces import IOrgSyncDatabase
 
+from nti.orgsync_rdbms.organizations.alchemy import Organization
 from nti.orgsync_rdbms.organizations.alchemy import load_organization
 
 #: Lock expire time 1.5(hr)
@@ -52,6 +56,26 @@ def get_organization(org_id, db=None):
     return load_organization(db, org_id)
 
 
+def get_all_organizations(db=None):
+    result = []
+    db = component.getUtility(IOrgSyncDatabase) if db is None else db
+    session = getattr(db, 'session', db)
+    organization = aliased(Organization)
+    for row in session.query(organization).order_by(organization.id).all():
+        result.append(row)
+    return result
+
+
 def get_account(account_id, db=None):
     db = component.getUtility(IOrgSyncDatabase) if db is None else db
     return load_account(db, account_id)
+
+
+def get_all_accounts(db=None):
+    result = []
+    db = component.getUtility(IOrgSyncDatabase) if db is None else db
+    session = getattr(db, 'session', db)
+    account = aliased(Account)
+    for row in session.query(account).order_by(account.id).all():
+        result.append(row)
+    return result

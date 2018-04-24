@@ -10,6 +10,7 @@ from __future__ import absolute_import
 from hamcrest import is_
 from hamcrest import none
 from hamcrest import is_not
+from hamcrest import has_length
 from hamcrest import assert_that
 
 import fudge
@@ -19,6 +20,7 @@ from redis_lock import AlreadyAcquired
 from nti.app.orgsync.common import get_account
 from nti.app.orgsync.common import get_redis_lock
 from nti.app.orgsync.common import is_locked_held
+from nti.app.orgsync.common import get_all_accounts
 from nti.app.orgsync.common import get_organization
 
 from nti.app.orgsync.tests import OrgSyncApplicationTestLayer
@@ -46,7 +48,7 @@ class TestCommon(ApplicationLayerTest):
 
         mock_ac.is_callable().returns(False)
         assert_that(is_locked_held('foo'), is_(True))
-        
+
         mock_ac.is_callable().raises(AlreadyAcquired)
         assert_that(is_locked_held('foo'), is_(True))
 
@@ -55,9 +57,13 @@ class TestCommon(ApplicationLayerTest):
     def test_get_account(self, mock_ga):
         mock_ga.is_callable().returns_fake()
         assert_that(get_account('foo'), is_not(none()))
-    
+
     @WithSharedApplicationMockDS
     @fudge.patch('nti.app.orgsync.common.load_organization')
     def test_get_organization(self, mock_go):
         mock_go.is_callable().returns_fake()
         assert_that(get_organization('foo'), is_not(none()))
+
+    @WithSharedApplicationMockDS
+    def test_get_all_accounts(self):
+        assert_that(get_all_accounts(), has_length(1))

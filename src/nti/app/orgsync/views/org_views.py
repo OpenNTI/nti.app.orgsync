@@ -13,13 +13,25 @@ from pyramid.view import view_defaults
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
+from nti.app.externalization.view_mixins import BatchingUtilsMixin
+
 from nti.app.orgsync.interfaces import ACT_VIEW_ORGS
 
+from nti.app.orgsync.common import get_all_organizations
+
+from nti.app.orgsync.views import OrgsPathAdapter
+
 from nti.externalization.externalization import to_external_object
+
+from nti.externalization.interfaces import LocatedExternalDict
+from nti.externalization.interfaces import StandardExternalFields
 
 from nti.orgsync.organizations.interfaces import IOrganization
 
 from nti.orgsync_rdbms.organizations.interfaces import IStorableOrganization
+
+ITEMS = StandardExternalFields.ITEMS
+TOTAL = StandardExternalFields.TOTAL
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -37,4 +49,26 @@ class OrganizationView(AbstractAuthenticatedView):
         result = to_external_object(self.context)
         result.__name__ = self.request.view_name
         result.__parent__ = self.request.context
+        return result
+
+
+@view_config(context=OrgsPathAdapter)
+@view_defaults(route_name="objects.generic.traversal",
+               renderer="rest",
+               permission=ACT_VIEW_ORGS,
+               request_method="GET")
+class OrganizationsView(AbstractAuthenticatedView,
+                        BatchingUtilsMixin):
+
+    _DEFAULT_BATCH_START = 0
+    _DEFAULT_BATCH_SIZE = 30
+
+    def __call__(self):
+        result = LocatedExternalDict()
+        result.__name__ = self.request.view_name
+        result.__parent__ = self.request.context
+        orgs = get_all_organizations()
+        items = result[ITEMS] = orgs
+        self._batch_items_iterable(result, items)
+        result[TOTAL] = len(orgs)
         return result

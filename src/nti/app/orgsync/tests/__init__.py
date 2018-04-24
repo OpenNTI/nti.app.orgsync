@@ -9,7 +9,12 @@ from __future__ import absolute_import
 
 from zope import component
 
+from nti.app.orgsync.tests.orgsync_db import drop
+from nti.app.orgsync.tests.orgsync_db import synchronize
+
 from nti.app.testing.application_webtest import ApplicationTestLayer
+
+from nti.orgsync_rdbms.database.interfaces import IOrgSyncDatabase
 
 
 class NoOpCM(object):
@@ -22,4 +27,14 @@ class NoOpCM(object):
 
 
 class OrgSyncApplicationTestLayer(ApplicationTestLayer):
-    pass
+
+    @classmethod
+    def setUp(cls):
+        super(OrgSyncApplicationTestLayer, cls).setUp()
+        cls.database = component.getUtility(IOrgSyncDatabase)
+        synchronize(cls.database)
+
+    @classmethod
+    def tearDown(cls):
+        super(OrgSyncApplicationTestLayer, cls).tearDown()
+        drop(cls.database)
