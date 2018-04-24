@@ -11,6 +11,8 @@ from __future__ import absolute_import
 from redis_lock import AlreadyAcquired
 from redis_lock import Lock as RedisLock
 
+from pyramid.threadlocal import get_current_request
+
 from sqlalchemy.orm import aliased
 
 from zope import component
@@ -79,3 +81,12 @@ def get_all_accounts(db=None):
     for row in session.query(account).order_by(account.id).all():
         result.append(row)
     return result
+
+
+def get_ds2(request=None):
+    request = request if request else get_current_request()
+    try:
+        result = request.path_info_peek() if request else None
+    except AttributeError:  # in unit test we may see this
+        result = None
+    return result or "dataserver2"
