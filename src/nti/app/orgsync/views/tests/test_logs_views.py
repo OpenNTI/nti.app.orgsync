@@ -29,3 +29,7 @@ class TestLogsViews(ApplicationLayerTest):
                          params={'orgs': '152512',
                                  'accounts': '7170547'},
                          status=200)
+
+
+        self.testapp.get('/dataserver2/orgsync/logs/@@last_entry',
+                         status=200)
