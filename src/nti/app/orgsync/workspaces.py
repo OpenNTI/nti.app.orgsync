@@ -8,8 +8,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-from pyramid.threadlocal import get_current_registry
-
 from zope import component
 from zope import interface
 
@@ -23,9 +21,13 @@ from nti.app.orgsync import LOGS
 from nti.app.orgsync import ORGS
 from nti.app.orgsync import ORGSYNC
 from nti.app.orgsync import ACCOUNTS
+from nti.app.orgsync import SYNCHRONIZE
 
 from nti.app.orgsync.authorization import is_orsync_admin
 
+from nti.app.orgsync.common import get_ds2
+
+from nti.app.orgsync.interfaces import ACT_SYNC_DB
 from nti.app.orgsync.interfaces import ACT_VIEW_LOGS
 from nti.app.orgsync.interfaces import ACT_VIEW_ORGS
 from nti.app.orgsync.interfaces import ACT_VIEW_ACCOUNTS
@@ -62,17 +64,11 @@ class _OrgSyncWorkspace(Contained):
 
     @Lazy
     def root(self):
-        request = get_current_registry()
-        try:
-            result = request.path_info_peek() if request else None
-        except AttributeError:  # in unit test we may see this
-            result = None
-        root = result or "dataserver2"
-        return root
+        return get_ds2()
 
-    def create_link(self, name):
+    def create_link(self, name, method='GET'):
         href = '/%s/%s/%s' % (self.root, ORGSYNC, name)
-        link = Link(href, rel=name, elements=())
+        link = Link(href, rel=name, elements=(), method=method)
         link.__name__ = ''
         interface.alsoProvides(link, ILocation)
         return link
@@ -81,15 +77,33 @@ class _OrgSyncWorkspace(Contained):
     def is_orgsync_admin(self):
         return is_orsync_admin(self.user)
 
+    @Lazy
+    def can_view_logs(self):
+        return is_orsync_admin(self.user) or has_permission(ACT_VIEW_LOGS, self)
+
+    @Lazy
+    def can_view_orgs(self):
+        return is_orsync_admin(self.user) or has_permission(ACT_VIEW_ORGS, self)
+
+    @Lazy
+    def can_view_accounts(self):
+        return is_orsync_admin(self.user) or has_permission(ACT_VIEW_ACCOUNTS, self)
+
+    @Lazy
+    def can_sync_db(self):
+        return is_orsync_admin(self.user) or has_permission(ACT_SYNC_DB, self)
+
     @property
     def links(self):
         result = []
-        if self.is_orgsync_admin or has_permission(ACT_VIEW_LOGS, self):
+        if self.can_view_logs:
             result.append(self.create_link(LOGS))
-        if self.is_orgsync_admin or has_permission(ACT_VIEW_ORGS, self):
+        if self.can_view_orgs:
             result.append(self.create_link(ORGS))
-        if self.is_orgsync_admin or has_permission(ACT_VIEW_ACCOUNTS, self):
+        if self.can_view_accounts:
             result.append(self.create_link(ACCOUNTS))
+        if self.can_sync_db:
+            result.append(self.create_link(SYNCHRONIZE, 'POST'))
         return result
 
 

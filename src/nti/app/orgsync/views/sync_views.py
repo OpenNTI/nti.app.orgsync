@@ -32,6 +32,8 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
+from nti.app.orgsync import SYNCHRONIZE
+
 from nti.app.orgsync.interfaces import ACT_SYNC_DB
 
 from nti.app.orgsync.synchronize import is_sync_lock_held
@@ -55,7 +57,7 @@ logger = __import__('logging').getLogger(__name__)
 
 
 @view_config(name="sync")
-@view_config(name="synchronize")
+@view_config(name=SYNCHRONIZE)
 @view_defaults(route_name="objects.generic.traversal",
                renderer="rest",
                permission=ACT_SYNC_DB,
@@ -99,7 +101,7 @@ class OrgSyncSyncView(AbstractAuthenticatedView,
 
 
 @view_config(name="sync")
-@view_config(name="synchronize")
+@view_config(name=SYNCHRONIZE)
 @view_config(context=OrgSyncPathAdapter)
 @view_defaults(route_name="objects.generic.traversal",
                renderer="templates/synchronize.pt",

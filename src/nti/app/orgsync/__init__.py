@@ -22,3 +22,6 @@ ACCOUNTS = "accounts"
 
 #: Logs Path adapter
 LOGS = "logs"
+
+#: Sync view
+SYNCHRONIZE = 'synchronize'
