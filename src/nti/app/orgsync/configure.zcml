@@ -74,4 +74,13 @@
 		<orgsync:registerOrgSyncKey apiKey="abcd12345" />
 	</configure>
 
+	<!-- Workspaces -->
+	<!-- Attach to user-service workspaces -->
+	<subscriber factory=".workspaces.OrgSyncWorkspace"
+				provides=".interfaces.IOrgSyncWorkspace" />
+
+	<!-- And an adapter for direct access -->
+	<adapter factory=".workspaces.OrgSyncWorkspace"
+			 provides=".interfaces.IOrgSyncWorkspace" />
+      
 </configure>

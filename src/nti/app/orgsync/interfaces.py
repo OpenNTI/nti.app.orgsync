@@ -12,6 +12,8 @@ from __future__ import absolute_import
 
 from zope.security.permission import Permission
 
+from nti.appserver.workspaces.interfaces import IWorkspace
+
 from nti.dataserver.authorization import ROLE_PREFIX
 
 from nti.dataserver.authorization import StringRole
@@ -31,3 +33,9 @@ ACT_VIEW_LOGS = Permission('nti.actions.orgsync.view_logs')
 
 #: Sync db permission
 ACT_SYNC_DB = Permission('nti.actions.orgsync.sync_db')
+
+
+class IOrgSyncWorkspace(IWorkspace):
+    """
+    A workspace containing data for orgsync.
+    """
