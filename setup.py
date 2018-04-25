@@ -57,6 +57,7 @@ setup(
     install_requires=[
         'setuptools',
         'nti.app.pyramid_zope',
+        'nti.app.spark',
         'nti.orgsync',
         'nti.orgsync_rdbms',
         'nti.traversal',
