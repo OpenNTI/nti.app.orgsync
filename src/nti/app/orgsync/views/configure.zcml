@@ -39,4 +39,11 @@
 		view="zope.interface.Interface"
 		layer="zope.interface.Interface" />
 
+	<z3c:macro
+		template="templates/macros.pt"
+		name="orgsync_task_script"
+		for="zope.interface.Interface"
+		view="zope.interface.Interface"
+		layer="zope.interface.Interface" />
+
 </configure>

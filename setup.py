@@ -60,6 +60,7 @@ setup(
         'nti.app.spark',
         'nti.orgsync',
         'nti.orgsync_rdbms',
+        'nti.orgsync_spark',
         'nti.traversal',
         'pyramid',
         'python-redis-lock',
