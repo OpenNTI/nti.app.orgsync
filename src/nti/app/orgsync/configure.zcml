@@ -21,6 +21,7 @@
 	<!-- z3c:template/layout -->
 	<include package="z3c.template" file="meta.zcml" />
 
+	<include package="nti.app.spark" />
 	<include package="nti.orgsync_rdbms" />
 
 	<!-- ACLs -->
