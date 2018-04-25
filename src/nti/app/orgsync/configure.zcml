@@ -82,5 +82,9 @@
 	<!-- And an adapter for direct access -->
 	<adapter factory=".workspaces.OrgSyncWorkspace"
 			 provides=".interfaces.IOrgSyncWorkspace" />
-      
+  
+	<!-- Decorators -->
+	<subscriber factory=".decorators._AccountDecorator"
+				provides="nti.externalization.interfaces.IExternalObjectDecorator"/>
+
 </configure>
