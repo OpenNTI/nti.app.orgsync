@@ -115,5 +115,5 @@ class _OrgSyncWorkspace(Contained):
 @interface.implementer(IOrgSyncWorkspace)
 def OrgSyncWorkspace(user_service):
     workspace = _OrgSyncWorkspace(user_service)
-    workspace.__parent__ = workspace.user
+    workspace.__parent__ = user_service.__parent__
     return workspace
