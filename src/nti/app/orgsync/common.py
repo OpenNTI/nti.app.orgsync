@@ -21,11 +21,14 @@ from nti.coremetadata.interfaces import IRedisClient
 
 from nti.orgsync_rdbms.accounts.alchemy import Account
 from nti.orgsync_rdbms.accounts.alchemy import load_account
+from nti.orgsync_rdbms.accounts.alchemy import get_account_profile_response
 
 from nti.orgsync_rdbms.database.interfaces import IOrgSyncDatabase
 
 from nti.orgsync_rdbms.organizations.alchemy import Organization
 from nti.orgsync_rdbms.organizations.alchemy import load_organization
+
+from nti.ou.orgsync_analysis import OUID
 
 #: Lock expire time 1.5(hr)
 DEFAULT_LOCK_EXPIRY_TIME = 5400
@@ -81,6 +84,11 @@ def get_all_accounts(db=None):
     for row in session.query(account).order_by(account.id).all():
         result.append(row)
     return result
+
+
+def get_account_ounetid(account, db=None):
+    db = component.getUtility(IOrgSyncDatabase) if db is None else db
+    return get_account_profile_response(db, account, OUID)
 
 
 def get_ds2(request=None):
