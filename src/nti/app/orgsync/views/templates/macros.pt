@@ -63,5 +63,55 @@
 
 </head>
 <body>
+	<script type="text/javascript" metal:define-macro="orgsync_spark_task_script">
+		function wait (milli) {
+   			return new Promise(t => setTimeout(t, milli));
+		}
+
+		async function poll (url) {
+
+			const req = await fetch(url, {
+				credentials: 'same-origin',
+				headers: {
+					'X-Requested-With': 'XMLHttpRequest'
+				}  
+    		});
+
+   			if (!req.ok) {
+				throw req;
+			}
+
+			const data = await req.json();
+
+			if (data.status === 'Success') {
+				return data;
+			}
+
+			if (data.status === 'Failed') {
+				throw data.jobId;
+			}
+
+			await wait(5000);
+
+			return await poll(url);
+		}
+		
+		async function json_get (url) {
+
+			const req = await fetch(url, {
+				credentials: 'same-origin',
+				headers: {
+					'X-Requested-With': 'XMLHttpRequest'
+				}  
+    		});
+
+   			if (!req.ok) {
+				throw req;
+			}
+
+			const data = await req.json();
+			return data;
+		}
+	</script>
 </body>
 </html>

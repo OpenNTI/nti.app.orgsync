@@ -34,6 +34,9 @@ ACT_VIEW_LOGS = Permission('nti.actions.orgsync.view_logs')
 #: Sync db permission
 ACT_SYNC_DB = Permission('nti.actions.orgsync.sync_db')
 
+#: Snapshot permission
+ACT_SNAPSHOPT = Permission('nti.actions.orgsync.snapshot')
+
 
 class IOrgSyncWorkspace(IWorkspace):
     """

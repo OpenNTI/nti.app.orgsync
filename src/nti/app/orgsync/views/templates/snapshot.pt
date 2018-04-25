@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:metal="http://xml.zope.org/namespaces/metal"
+	  xmlns:tal="http://xml.zope.org/namespaces/tal">
+	<head metal:use-macro="macro:orgsync_head">
+		<metal:slot fill-slot="title">
+			<title>OrgSync-Spark</title>
+		</metal:slot>
+	</head>
+	<body>
+		<form class="form-horizontal" action="" method="" id="upload_form">
+			<button type="button" data-toggle="modal" data-target="#snapshotModal"
+					tal:condition="python: not options['lock_held']">Snapshot</button>
+			<div tal:condition="python: options['lock_held']">
+				<b><font color="red">Snapshot in progress.</font></b>
+			</div>
+		</form>
+		<p/>
+		<table style="width:40%">
+			<thead>
+				<tr>
+					<th>Timestamp</th>
+					<th>Accounts</th>
+					<th>Organizations</th>
+					<th>Last Entry</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr tal:repeat="item options/snapshots">
+					<td tal:content="item/timestamp" />
+					<td tal:content="item/accounts" />
+					<td tal:content="item/organizations" />
+					<td tal:content="options/last_entry" />
+				</tr>
+			</tbody>
+		</table>
+		<div class="modal fade" id="snapshotModal" role="dialog" 
+			tal:attributes="url options/snapshot_url; job_url options/job_poll_url; job_error_url options/job_error_url">
+			<div class="modal-dialog">
+				<form class="form-horizontal" action="" method="POST" id="run_form">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+							<h4 class="modal-title" metal:define-slot="publish_modal_title">Are you sure you want to snapshot?</h4>
+						</div>
+						<div class="modal-body">
+							<div class="form-group col-sm-offset-1">
+								<label class="control-label col-sm-2">Timestamp:</label>
+								<div class="col-sm-5">
+									<div class='input-group date' id='timestamp_datetimepicker'>
+										<input class="form-control" id="target_timestamp_date" name="target_timestamp_date"></input>
+										<span class="input-group-addon">
+											<span class="glyphicon glyphicon-calendar"></span>
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-primary" id="confirm_snapshot_button">Confirm</button>
+							<button type="button" class="btn btn-default" id="cancel_snapshot_button" data-dismiss="modal">Cancel</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
+		<script type="text/javascript" metal:use-macro="macro:orgsync_task_script" />
+		<script type="text/javascript">
+
+			$('#timestamp_datetimepicker').datetimepicker({
+				format: "YYYY-MM-DD"
+			}).on("dp.change", function(e){
+				$('#publish_form').bootstrapValidator('revalidateField', 'target_timestamp_date');
+			});
+
+			function alert_job_error(error_url, jobId) {
+				const url = error_url + jobId;
+				json_get(url)
+					.then(data => alert(data.message))
+					.catch((e) => {
+						console.log(e);
+						alert('Failed to get job error');
+					});
+			}
+
+			function doSnapshot() {
+				// Get URLs
+				var url = $('#snapshotModal').attr('url');
+				var job_url = $('#snapshotModal').attr('job_url');
+				var error_url = $('#snapshotModal').attr('job_error_url');
+				// Timestamp
+				var timestamp = document.getElementById('target_timestamp_date').value;
+				// Run job
+				return new Promise((success, failed) => {
+					document.getElementById("cancel_snapshot_button").setAttribute('disabled', true);
+					document.getElementById("confirm_snapshot_button").setAttribute('disabled', true);
+					$.ajax({
+						url: url,
+						method: 'POST',
+						data: JSON.stringify({
+							"timestamp": timestamp
+						}),
+						success: function(data, status, jqXHR) {
+							const jobId = data['JobId']
+							const poll_url = job_url + jobId
+							poll(poll_url)
+								.then(() => {
+									$('#indicator').hide();
+									success();
+								})
+								.catch(() => {
+									alert_job_error(error_url, jobId);
+									failed();
+								});
+						},
+						error: function(jqXHR, exception) {
+							failed(error);
+						}
+					});
+				});
+			}
+
+			$('#confirm_snapshot_button').on('click', function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				$('#indicator').show();
+				doSnapshot()
+					.catch((e) => {
+						console.log(e);
+					})
+					.then(() => {
+						document.getElementById("cancel_snapshot_button").removeAttribute('disabled');
+						document.getElementById("confirm_snapshot_button").removeAttribute('disabled');
+						$('#runModal').modal('hide');
+						location.reload(true);
+					});
+			});
+
+		</script>
+	</body>
+</html>

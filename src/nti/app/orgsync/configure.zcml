@@ -41,6 +41,9 @@
 	<permission	id="nti.actions.orgsync.sync_db"
 				title="Sync Database" />
 
+	<permission	id="nti.actions.orgsync.snapshot"
+				title="Snapshot Database" />
+
 	<grant	permission="nti.actions.orgsync.view_orgs"
 			role="role:nti.dataserver.orgsync" />
 
@@ -51,6 +54,9 @@
 			role="role:nti.dataserver.orgsync" />
 
 	<grant	permission="nti.actions.orgsync.sync_db"
+			role="role:nti.dataserver.orgsync" />
+
+	<grant	permission="nti.actions.orgsync.snapshot"
 			role="role:nti.dataserver.orgsync" />
 
 	<adapter name="NextthoughtDotComOUOrgSyncAdmin"
