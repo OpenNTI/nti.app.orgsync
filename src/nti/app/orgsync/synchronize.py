@@ -13,6 +13,8 @@ from zope import component
 from nti.app.orgsync.common import get_redis_lock
 from nti.app.orgsync.common import is_locked_held
 
+from nti.app.spark.runner import queue_job
+
 from nti.orgsync.client import DEFAULT_TIMEOUT
 from nti.orgsync.client import DEFAULT_MAX_WORKERS
 
@@ -46,3 +48,9 @@ def synchronize_orgsync(start_date=None, end_date=None,
                                        end_date=end_date,
                                        start_date=start_date,
                                        workers=workers, timeout=timeout)
+
+
+def create_orgsync_sync_job(creator, start_date=None, end_date=None):
+    return queue_job(creator,
+                     synchronize_orgsync,
+                     args=(start_date, end_date,))
