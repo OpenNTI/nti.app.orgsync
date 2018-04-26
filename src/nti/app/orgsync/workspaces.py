@@ -21,6 +21,7 @@ from nti.app.orgsync import LOGS
 from nti.app.orgsync import ORGS
 from nti.app.orgsync import ORGSYNC
 from nti.app.orgsync import ACCOUNTS
+from nti.app.orgsync import SNAPSHOT
 from nti.app.orgsync import LAST_ENTRY
 from nti.app.orgsync import SYNCHRONIZE
 
@@ -29,6 +30,7 @@ from nti.app.orgsync.authorization import is_orsync_admin
 from nti.app.orgsync.common import get_ds2
 
 from nti.app.orgsync.interfaces import ACT_SYNC_DB
+from nti.app.orgsync.interfaces import ACT_SNAPSHOPT
 from nti.app.orgsync.interfaces import ACT_VIEW_LOGS
 from nti.app.orgsync.interfaces import ACT_VIEW_ORGS
 from nti.app.orgsync.interfaces import ACT_VIEW_ACCOUNTS
@@ -95,6 +97,10 @@ class _OrgSyncWorkspace(Contained):
     def can_sync_db(self):
         return is_orsync_admin(self.user) or has_permission(ACT_SYNC_DB, self)
 
+    @Lazy
+    def can_snapshot_db(self):
+        return is_orsync_admin(self.user) or has_permission(ACT_SNAPSHOPT, self)
+
     @property
     def links(self):
         result = []
@@ -108,6 +114,8 @@ class _OrgSyncWorkspace(Contained):
             result.append(self.create_link(ACCOUNTS))
         if self.can_sync_db:
             result.append(self.create_link(SYNCHRONIZE, method='POST'))
+        if self.can_snapshot_db:
+            result.append(self.create_link(SNAPSHOT, method='POST'))
         return result
 
 
