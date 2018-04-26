@@ -50,7 +50,8 @@ def synchronize_orgsync(start_date=None, end_date=None,
                                        workers=workers, timeout=timeout)
 
 
-def create_orgsync_sync_job(creator, start_date=None, end_date=None):
+def create_orgsync_sync_job(creator, start_date=None, end_date=None,
+                            workers=DEFAULT_MAX_WORKERS):
     return queue_job(creator,
                      synchronize_orgsync,
-                     args=(start_date, end_date,))
+                     args=(start_date, end_date, workers))
