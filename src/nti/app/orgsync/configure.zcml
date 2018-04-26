@@ -75,12 +75,6 @@
 	<!-- Views -->
 	<include package=".views" />
 
-	<!-- Test OrgSyncKey -->
-	<configure zcml:condition="have testmode">
-		<include package="nti.orgsync" file="meta.zcml" />
-		<orgsync:registerOrgSyncKey apiKey="abcd12345" />
-	</configure>
-
 	<!-- Workspaces -->
 	<!-- Attach to user-service workspaces -->
 	<subscriber factory=".workspaces.OrgSyncWorkspace"
