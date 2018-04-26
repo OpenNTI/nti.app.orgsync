@@ -8,8 +8,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-import time
-
 from zope import component
 
 from nti.app.spark.common import get_redis_lock
@@ -20,6 +18,9 @@ from nti.app.spark.runner import queue_job
 from nti.orgsync_rdbms.database.interfaces import IOrgSyncDatabase
 
 from nti.orgsync_spark.snapshot import snapshot as db_snapshot
+
+from nti.spark.utils import get_timestamp
+
 
 #: snapshot lock name
 SNAPSHOT_LOCK = '++etc++orgsync++snapshot++lock'
@@ -38,7 +39,7 @@ def is_snapshot_lock_held():
 def orgsync_source_snapshot(timestamp, start_date=None, end_date=None,
                             logs=False, archive=True):
     with get_snapshot_lock():
-        timestamp = time.mktime(timestamp.timetuple())
+        timestamp = get_timestamp(timestamp)
         database = component.getUtility(IOrgSyncDatabase)
         db_snapshot(database, timestamp, start_date, end_date, logs, archive)
 

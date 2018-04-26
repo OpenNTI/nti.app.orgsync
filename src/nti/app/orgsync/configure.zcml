@@ -75,6 +75,9 @@
 	<!-- Views -->
 	<include package=".views" />
 
+	<!-- Subscribers -->
+	<subscriber handler=".subscribers.on_orgsync_syncned" />
+
 	<!-- Workspaces -->
 	<!-- Attach to user-service workspaces -->
 	<subscriber factory=".workspaces.OrgSyncWorkspace"
