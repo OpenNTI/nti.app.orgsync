@@ -11,5 +11,6 @@
 	<pyramid:scan package=".logs_views" />
 	<pyramid:scan package=".sync_views" />
 	<pyramid:scan package=".account_views" />
-
+	<pyramid:scan package=".snapshot_views" />
+	
 </configure>
