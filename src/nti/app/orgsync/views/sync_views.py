@@ -15,8 +15,6 @@ import isodate
 
 from requests.structures import CaseInsensitiveDict
 
-from pyramid import httpexceptions as hexc
-
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 
@@ -37,7 +35,7 @@ from nti.app.orgsync import SYNCHRONIZE
 from nti.app.orgsync.interfaces import ACT_SYNC_DB
 
 from nti.app.orgsync.synchronize import is_sync_lock_held
-from nti.app.orgsync.synchronize import synchronize_orgsync
+from nti.app.orgsync.synchronize import create_orgsync_sync_job
 
 from nti.app.orgsync.views import OrgSyncPathAdapter
 
@@ -85,6 +83,7 @@ class OrgSyncSyncView(AbstractAuthenticatedView,
 
     def __call__(self):
         data = self.readInput()
+        # parse dates
         end_date = data.get('endDate') or None
         end_date = parse_date(end_date) if end_date else None
         start_date = data.get('startDate') or None
@@ -94,10 +93,11 @@ class OrgSyncSyncView(AbstractAuthenticatedView,
             end_date = end_date + timedelta(days=7)
         if start_date is None:
             start_date = end_date - timedelta(days=7)
+        # parse workers
         workers = int(data.get('workers') or DEFAULT_MAX_WORKERS)
-        synchronize_orgsync(start_date, end_date, workers)
-        logger.info("Synchronization completed")
-        return hexc.HTTPOk()
+        # pylint: disable=no-member
+        creator = self.remoteUser.username
+        return create_orgsync_sync_job(creator, start_date, end_date, workers)
 
 
 @view_config(name="sync")

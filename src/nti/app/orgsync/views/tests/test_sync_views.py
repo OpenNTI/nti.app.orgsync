@@ -23,7 +23,7 @@ class TestSyncViews(ApplicationLayerTest):
     layer = OrgSyncApplicationTestLayer
 
     @WithSharedApplicationMockDS(testapp=True, users=True)
-    @fudge.patch('nti.app.orgsync.views.sync_views.synchronize_orgsync')
+    @fudge.patch('nti.app.orgsync.views.sync_views.create_orgsync_sync_job')
     def test_sync(self, mock_sync):
         with mock_dataserver.mock_db_trans(self.ds):
             self._create_user("pgreazy")
@@ -33,7 +33,7 @@ class TestSyncViews(ApplicationLayerTest):
                           extra_environ=unauthed_environ,
                           status=403)
 
-        mock_sync.is_callable().returns_fake()
+        mock_sync.is_callable().returns("job")
         self.testapp.post_json('/dataserver2/orgsync/@@synchronize',
                                {
                                    'workers': 1,
