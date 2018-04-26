@@ -22,6 +22,7 @@ from nti.coremetadata.interfaces import IRedisClient
 from nti.orgsync_rdbms.accounts.alchemy import Account
 from nti.orgsync_rdbms.accounts.alchemy import load_account
 from nti.orgsync_rdbms.accounts.alchemy import get_account_profile_response
+from nti.orgsync_rdbms.accounts.alchemy import get_account_profile_responses
 
 from nti.orgsync_rdbms.database.interfaces import IOrgSyncDatabase
 
@@ -89,6 +90,17 @@ def get_all_accounts(db=None):
 def get_account_ounetid(account, db=None):
     db = component.getUtility(IOrgSyncDatabase) if db is None else db
     return get_account_profile_response(db, account, OUID)
+
+
+def get_account_profile(account, db=None):
+    result = {}
+    db = component.getUtility(IOrgSyncDatabase) if db is None else db
+    responses = get_account_profile_responses(db, account)
+    for resp in responses or ():
+        name = resp.element.name
+        if name:
+            result[name] = resp.data
+    return result
 
 
 def get_ds2(request=None):
