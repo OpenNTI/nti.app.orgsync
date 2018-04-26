@@ -28,3 +28,6 @@ SYNCHRONIZE = 'synchronize'
 
 #: Last entry view
 LAST_ENTRY = 'last_entry'
+
+#: Snapshot view
+SNAPSHOT = 'snapshot'

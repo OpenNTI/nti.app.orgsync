@@ -25,6 +25,8 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
+from nti.app.orgsync import SNAPSHOT
+
 from nti.app.orgsync.interfaces import ACT_SNAPSHOPT
 
 from nti.app.orgsync.snapshot import is_snapshot_lock_held
@@ -52,7 +54,7 @@ from nti.externalization.interfaces import LocatedExternalDict
 logger = __import__('logging').getLogger(__name__)
 
 
-@view_config(name="snapshot")
+@view_config(name=SNAPSHOT)
 @view_defaults(route_name='objects.generic.traversal',
                renderer='rest',
                request_method='POST',
@@ -94,7 +96,7 @@ class SnapshotOrgSyncView(AbstractAuthenticatedView,
         return result
 
 
-@view_config(name="snapshot")
+@view_config(name=SNAPSHOT)
 @view_defaults(route_name='objects.generic.traversal',
                renderer="templates/snapshot.pt",
                request_method='GET',
