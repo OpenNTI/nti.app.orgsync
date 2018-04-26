@@ -7,11 +7,17 @@
 from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
- 
+
+from datetime import datetime
+
 from zope.component import getUtility
+
+from zope.event import notify
 
 from nti.app.orgsync.common import get_redis_lock
 from nti.app.orgsync.common import is_locked_held
+
+from nti.app.orgsync.interfaces import OrgSyncSyncEvent
 
 from nti.app.spark.runner import queue_job
 
@@ -44,10 +50,13 @@ def synchronize_orgsync(start_date=None, end_date=None,
         # always process classifications
         process_classifications(key, db, timeout=timeout)
         # membership logs sync orgs and accounts
-        return process_membership_logs(key, db,
-                                       end_date=end_date,
-                                       start_date=start_date,
-                                       workers=workers, timeout=timeout)
+        result = process_membership_logs(key, db,
+                                         end_date=end_date,
+                                         start_date=start_date,
+                                         workers=workers, timeout=timeout)
+        if result:  # notify if there are logs
+            notify(OrgSyncSyncEvent(db, datetime.now(), start_date, end_date))
+        return result
 
 
 def create_orgsync_sync_job(creator, start_date=None, end_date=None,
