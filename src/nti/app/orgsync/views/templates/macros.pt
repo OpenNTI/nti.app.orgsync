@@ -63,7 +63,7 @@
 
 </head>
 <body>
-	<script type="text/javascript" metal:define-macro="orgsync_spark_task_script">
+	<script type="text/javascript" metal:define-macro="orgsync_task_script">
 		function wait (milli) {
    			return new Promise(t => setTimeout(t, milli));
 		}
