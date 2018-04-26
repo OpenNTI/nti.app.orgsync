@@ -27,11 +27,16 @@ from zope.cachedescriptors.property import Lazy
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
+from nti.app.externalization.view_mixins import BatchingUtilsMixin
+
 from nti.app.orgsync import LAST_ENTRY
 
 from nti.app.orgsync.interfaces import ACT_VIEW_LOGS
 
 from nti.app.orgsync.views import LogsPathAdapter
+
+from nti.externalization.interfaces import LocatedExternalDict
+from nti.externalization.interfaces import StandardExternalFields
 
 from nti.orgsync_rdbms.database.interfaces import IOrgSyncDatabase
 
@@ -39,6 +44,9 @@ from nti.orgsync_rdbms.entries.alchemy import MembershipLog
 from nti.orgsync_rdbms.entries.alchemy import get_membership_logs
 
 from nti.orgsync_rdbms.utils import parse_date
+
+ITEMS = StandardExternalFields.ITEMS
+TOTAL = StandardExternalFields.TOTAL
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -48,7 +56,11 @@ logger = __import__('logging').getLogger(__name__)
              permission=ACT_VIEW_LOGS,
              context=LogsPathAdapter,
              request_method="GET")
-class MembershipLogsView(AbstractAuthenticatedView):
+class MembershipLogsView(AbstractAuthenticatedView,
+                         BatchingUtilsMixin):
+
+    _DEFAULT_BATCH_START = 0
+    _DEFAULT_BATCH_SIZE = 30
 
     @Lazy
     def database(self):
@@ -56,16 +68,26 @@ class MembershipLogsView(AbstractAuthenticatedView):
 
     def __call__(self):
         values = CaseInsensitiveDict(self.request.params)
+        # parse dates
         end_date = parse_date(values.get('endDate'))
         start_date = parse_date(values.get('startDate'))
+        # parse orgs
         orgs = values.get('orgs') or values.get('organizations')
         if isinstance(orgs, six.string_types):
             orgs = orgs.split(',')
+        # parse accounts
         accounts = values.get('account') or values.get('accounts')
         if isinstance(accounts, six.string_types):
             accounts = accounts.split(',')
-        result = get_membership_logs(self.database, start_date,
-                                     end_date, orgs, accounts)
+        # get logs
+        result = LocatedExternalDict()
+        result.__name__ = self.request.view_name
+        result.__parent__ = self.request.context
+        logs = get_membership_logs(self.database, start_date,
+                                       end_date, orgs, accounts)()
+        items = result[ITEMS] = logs
+        self._batch_items_iterable(result, items)
+        result[TOTAL] = len(accounts)
         return result
 
 
