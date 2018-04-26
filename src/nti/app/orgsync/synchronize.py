@@ -7,8 +7,8 @@
 from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
-
-from zope import component
+ 
+from zope.component import getUtility
 
 from nti.app.orgsync.common import get_redis_lock
 from nti.app.orgsync.common import is_locked_held
@@ -39,8 +39,8 @@ def synchronize_orgsync(start_date=None, end_date=None,
                         workers=DEFAULT_MAX_WORKERS,
                         timeout=DEFAULT_TIMEOUT):
     with get_redis_lock(SYNC_ORGSYNC_LOCK):
-        key = component.getUtility(IOrgSyncKey)
-        db = component.getUtility(IOrgSyncDatabase)
+        key = getUtility(IOrgSyncKey)
+        db = getUtility(IOrgSyncDatabase)
         # always process classifications
         process_classifications(key, db, timeout=timeout)
         # membership logs sync orgs and accounts
