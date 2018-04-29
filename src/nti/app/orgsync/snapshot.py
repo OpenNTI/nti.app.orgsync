@@ -21,7 +21,6 @@ from nti.orgsync_spark.snapshot import snapshot as db_snapshot
 
 from nti.spark.utils import get_timestamp
 
-
 #: snapshot lock name
 SNAPSHOT_LOCK = '++etc++orgsync++snapshot++lock'
 
