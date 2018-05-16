@@ -56,6 +56,16 @@ def is_locked_held(name):
         pass
     return result
 
+def query_filter_table(session, table, filters=None):
+    query_obj = session.query(table).order_by(table.id)
+    if filters:
+        # Filter out any nonsense filter keywords
+        org_cols = [col.key for col in table.__table__.columns]
+        valid_filters = {k:v for k, v in filters.iteritems() if k in org_cols}
+        # Chain filter commands on the query object for each filter
+        for k, v in valid_filters.iteritems():
+            query_obj = query_obj.filter(getattr(table, k).in_(v))
+    return query_obj
 
 def get_organization(org_id, db=None):
     db = component.getUtility(IOrgSyncDatabase) if db is None else db
@@ -67,14 +77,7 @@ def get_all_organizations(db=None, filters=None):
     db = component.getUtility(IOrgSyncDatabase) if db is None else db
     session = getattr(db, 'session', db)
     organization = aliased(Organization)
-    query_obj = session.query(organization).order_by(organization.id)
-    if filters:
-        # Filter out any nonsense filter keywords
-        org_cols = [col.key for col in organization.__table__.columns]
-        valid_filters = {k:v for k, v in filters.iteritems() if k in org_cols}
-        # Chain filter commands on the query object for each filter
-        for k, v in valid_filters.iteritems():
-            query_obj = query_obj.filter(getattr(organization, k).in_(v))
+    query_obj = query_filter_table(session, organization, filters)
     for row in query_obj.all():
         result.append(row)
     return result
