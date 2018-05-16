@@ -62,12 +62,20 @@ def get_organization(org_id, db=None):
     return load_organization(db, org_id)
 
 
-def get_all_organizations(db=None):
+def get_all_organizations(db=None, filters=None):
     result = []
     db = component.getUtility(IOrgSyncDatabase) if db is None else db
     session = getattr(db, 'session', db)
     organization = aliased(Organization)
-    for row in session.query(organization).order_by(organization.id).all():
+    query_obj = session.query(organization).order_by(organization.id)
+    if filters:
+        # Filter out any nonsense filter keywords
+        org_cols = [col.key for col in organization.__table__.columns]
+        valid_filters = {k:v for k, v in filters.iteritems() if k in org_cols}
+        # Chain filter commands on the query object for each filter
+        for k, v in valid_filters.iteritems():
+            query_obj = query_obj.filter(getattr(organization, k).in_(v))
+    for row in query_obj.all():
         result.append(row)
     return result
 
