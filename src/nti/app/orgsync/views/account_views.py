@@ -8,6 +8,11 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import six
+import collections
+
+from requests.structures import CaseInsensitiveDict
+
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 
@@ -66,7 +71,13 @@ class AccountsView(AbstractAuthenticatedView,
         result = LocatedExternalDict()
         result.__name__ = self.request.view_name
         result.__parent__ = self.request.context
-        accounts = get_all_accounts()
+        filters = CaseInsensitiveDict(self.request.params)
+        for f in filters.keys():
+            filt = filters[f]
+            # listify any singular values to match multi value searches
+            if isinstance(filt, six.string_types) or not isinstance(filt, collections.Iterable):
+                filters[f] = [filt]
+        accounts = get_all_accounts(filters=filters)
         items = result[ITEMS] = accounts
         self._batch_items_iterable(result, items)
         result[TOTAL] = len(accounts)

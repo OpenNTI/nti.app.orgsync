@@ -88,12 +88,13 @@ def get_account(account_id, db=None):
     return load_account(db, account_id)
 
 
-def get_all_accounts(db=None):
+def get_all_accounts(db=None, filters=None):
     result = []
     db = component.getUtility(IOrgSyncDatabase) if db is None else db
     session = getattr(db, 'session', db)
     account = aliased(Account)
-    for row in session.query(account).order_by(account.id).all():
+    query_obj = query_filter_table(session, account, filters)
+    for row in query_obj.all():
         result.append(row)
     return result
 
