@@ -17,6 +17,8 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
+from nti.ou.analysis import OUNET_ID
+
 
 class TestAccountViews(ApplicationLayerTest):
 
@@ -36,9 +38,10 @@ class TestAccountViews(ApplicationLayerTest):
     def test_accounts(self):
         res = self.testapp.get('/dataserver2/orgsync/accounts',
                                status=200)
-        
+
         assert_that(res.json_body['Items'], has_length(1))
-        assert_that(res.json_body['Items'][0], has_entry('username', self.existing_username))
+        assert_that(res.json_body['Items'][0],
+                    has_entry('username', self.existing_username))
 
         res = self.testapp.get('/dataserver2/orgsync/accounts',
                                params={
@@ -49,9 +52,17 @@ class TestAccountViews(ApplicationLayerTest):
 
         res = self.testapp.get('/dataserver2/orgsync/accounts',
                                params={
+                                   OUNET_ID: '112879506'
+                               },
+                               status=200)
+        assert_that(res.json_body['Items'], has_length(1))
+
+        res = self.testapp.get('/dataserver2/orgsync/accounts',
+                               params={
                                    'username': self.existing_username
                                },
                                status=200)
-        
+
         assert_that(res.json_body['Items'], has_length(1))
-        assert_that(res.json_body['Items'][0], has_entry('username', self.existing_username))
+        assert_that(res.json_body['Items'][0], 
+                    has_entry('username', self.existing_username))
