@@ -65,7 +65,7 @@ def query_filter_table(session, table, filters=None):
         valid_filters = {k: v for k, v in filters.iteritems() if k in org_cols}
         # Chain filter commands on the query object for each filter
         for k, v in valid_filters.items():
-            value = "%" + "%s" % v + "%" 
+            value = "%" + v + "%" 
             query_obj = query_obj.filter(getattr(table, k).like(value))
     return query_obj
 
