@@ -56,7 +56,6 @@ setup(
     tests_require=TESTS_REQUIRE,
     install_requires=[
         'setuptools',
-        'nti.app.pyramid_zope',
         'nti.app.spark',
         'nti.orgsync',
         'nti.orgsync_rdbms',
@@ -66,9 +65,6 @@ setup(
         'pyramid',
         'python-redis-lock',
         'six',
-        'z3c.baseregistry',
-        'z3c.macro',
-        'z3c.template',
         'zope.cachedescriptors',
         'zope.component',
         'zope.event',
