@@ -1,8 +1,7 @@
 <!-- -*- mode: nxml -*- -->
 <configure	xmlns="http://namespaces.zope.org/zope"
 			xmlns:i18n="http://namespaces.zope.org/i18n"
-			xmlns:zcml="http://namespaces.zope.org/zcml"
-			xmlns:z3c="http://namespaces.zope.org/z3c">
+			xmlns:zcml="http://namespaces.zope.org/zcml">
 
 	<include package="zope.component" file="meta.zcml" />
 	<include package="zope.component" />
@@ -30,20 +29,5 @@
 			 for=".OrgSyncPathAdapter pyramid.interfaces.IRequest"
 			 factory=".LogsPathAdapter"
 			 provides="zope.traversing.interfaces.IPathAdapter" />
-
-	<!-- Macros -->
-	<z3c:macro
-		template="templates/macros.pt"
-		name="orgsync_head"
-		for="zope.interface.Interface"
-		view="zope.interface.Interface"
-		layer="zope.interface.Interface" />
-
-	<z3c:macro
-		template="templates/macros.pt"
-		name="orgsync_task_script"
-		for="zope.interface.Interface"
-		view="zope.interface.Interface"
-		layer="zope.interface.Interface" />
 
 </configure>
