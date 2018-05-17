@@ -39,10 +39,3 @@ class TestSyncViews(ApplicationLayerTest):
                                    'workers': 1,
                                },
                                status=200)
-    
-    @WithSharedApplicationMockDS(testapp=True, users=True)
-    @fudge.patch('nti.app.orgsync.views.sync_views.is_sync_lock_held')
-    def test_synchronization(self, mokc_ilh):
-        mokc_ilh.is_callable().returns(False)
-        self.testapp.get('/dataserver2/orgsync/@@synchronize',
-                        status=200)

@@ -29,10 +29,3 @@ class TestSnapshotViews(ApplicationLayerTest):
                                    'timestamp': '2017-11-30'
                                },
                                status=200)
-        
-    @WithSharedApplicationMockDS(testapp=True, users=True)
-    @fudge.patch('nti.app.orgsync.views.snapshot_views.is_snapshot_lock_held')
-    def test_snapshot_get(self, mock_lh):
-        mock_lh.is_callable().returns(True)
-        self.testapp.get('/dataserver2/orgsync/@@snapshot',
-                         status=200)
