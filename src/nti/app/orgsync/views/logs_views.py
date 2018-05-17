@@ -84,7 +84,7 @@ class MembershipLogsView(AbstractAuthenticatedView,
         result.__name__ = self.request.view_name
         result.__parent__ = self.request.context
         logs = get_membership_logs(self.database, start_date,
-                                   end_date, orgs, accounts)()
+                                   end_date, orgs, accounts)
         items = result[ITEMS] = logs
         self._batch_items_iterable(result, items)
         result[TOTAL] = len(accounts)
