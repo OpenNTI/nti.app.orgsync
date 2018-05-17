@@ -21,6 +21,9 @@ from nti.app.orgsync import SOONER_ID
 
 from nti.coremetadata.interfaces import IRedisClient
 
+from nti.externalization.interfaces import LocatedExternalDict
+from nti.externalization.interfaces import LocatedExternalList
+
 from nti.orgsync_rdbms.accounts.alchemy import Account
 from nti.orgsync_rdbms.accounts.alchemy import load_account
 from nti.orgsync_rdbms.accounts.alchemy import get_account_profile_response
@@ -109,7 +112,7 @@ def get_all_accounts(db=None, filters=None):
         value = "%" + "%s" % v + "%" 
         result.update(get_accounts_like_profile_response(db, OUID, value))
     result.update(query_obj.all())
-    return tuple(result)
+    return LocatedExternalList(result)
 
 
 def get_account_ounetid(account, db=None):
@@ -118,7 +121,7 @@ def get_account_ounetid(account, db=None):
 
 
 def get_account_profile(account, db=None):
-    result = {}
+    result = LocatedExternalDict()
     db = component.getUtility(IOrgSyncDatabase) if db is None else db
     responses = get_account_profile_responses(db, account)
     for resp in responses or ():
