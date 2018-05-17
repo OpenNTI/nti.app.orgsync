@@ -36,7 +36,6 @@ from nti.ou.analysis import OUNET_ID
 
 from nti.ou.orgsync_analysis import OUID
 
-
 #: Lock expire time 1.5(hr)
 DEFAULT_LOCK_EXPIRY_TIME = 5400
 
