@@ -10,6 +10,8 @@ from __future__ import absolute_import
 
 from zope import component
 
+from nti.app.orgsync import SOONER_ID
+
 from nti.app.orgsync.common import get_account_ounetid
 
 from nti.externalization.singleton import Singleton
@@ -36,5 +38,5 @@ class _AccountDecorator(Singleton):
             orgs.append(org.id)
         # add sooner id
         ounetid = get_account_ounetid(context)
-        result['SoonerID'] = result[OUNET_ID] = ounetid
+        result[SOONER_ID] = result[OUNET_ID] = ounetid
         return result

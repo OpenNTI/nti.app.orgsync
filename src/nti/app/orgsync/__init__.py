@@ -31,3 +31,6 @@ LAST_ENTRY = 'last_entry'
 
 #: Snapshot view
 SNAPSHOT = 'snapshot'
+
+#: Snapshot view
+SOONER_ID = 'SoonerID'
