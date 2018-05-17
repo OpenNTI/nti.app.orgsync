@@ -67,6 +67,7 @@ setup(
         'six',
         'zope.cachedescriptors',
         'zope.component',
+        'zope.container',
         'zope.event',
         'zope.i18nmessageid',
         'zope.interface',
