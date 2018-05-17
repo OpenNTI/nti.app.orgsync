@@ -81,4 +81,9 @@
 	<subscriber factory=".decorators._AccountDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator"/>
 
+	<subscriber factory=".decorators._AccountsLinkDecorator"
+				for="nti.orgsync_rdbms.accounts.interfaces.IStorableAccount
+					 pyramid.interfaces.IRequest"
+				provides="nti.externalization.interfaces.IExternalObjectDecorator" />
+
 </configure>

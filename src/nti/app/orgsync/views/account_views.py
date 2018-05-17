@@ -24,6 +24,7 @@ from nti.app.externalization.view_mixins import BatchingUtilsMixin
 from nti.app.orgsync.interfaces import ACT_VIEW_ACCOUNTS
 
 from nti.app.orgsync.common import get_all_accounts
+from nti.app.orgsync.common import get_account_profile
 
 from nti.app.orgsync.views import AccountsPathAdapter
 
@@ -54,6 +55,22 @@ class AccountView(AbstractAuthenticatedView):
 
     def __call__(self):
         result = to_external_object(self.context)
+        result.__name__ = self.request.view_name
+        result.__parent__ = self.request.context
+        return result
+
+
+@view_config(context=IAccount)
+@view_config(context=IStorableAccount)
+@view_defaults(route_name="objects.generic.traversal",
+               renderer="rest",
+               name='profile',
+               permission=ACT_VIEW_ACCOUNTS,
+               request_method="GET")
+class AccountProfileView(AbstractAuthenticatedView):
+
+    def __call__(self):
+        result = get_account_profile(self.context)
         result.__name__ = self.request.view_name
         result.__parent__ = self.request.context
         return result

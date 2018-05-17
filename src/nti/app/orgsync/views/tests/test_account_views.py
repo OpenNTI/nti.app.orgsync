@@ -33,6 +33,9 @@ class TestAccountViews(ApplicationLayerTest):
 
         self.testapp.get('/dataserver2/orgsync/accounts/7170547',
                          status=200)
+        
+        self.testapp.get('/dataserver2/orgsync/accounts/7170547/@@profile',
+                         status=200)
 
     @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_accounts(self):
