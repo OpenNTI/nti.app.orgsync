@@ -17,19 +17,25 @@ from sqlalchemy.orm import aliased
 
 from zope import component
 
+from nti.app.orgsync import SOONER_ID
+
 from nti.coremetadata.interfaces import IRedisClient
 
 from nti.orgsync_rdbms.accounts.alchemy import Account
 from nti.orgsync_rdbms.accounts.alchemy import load_account
 from nti.orgsync_rdbms.accounts.alchemy import get_account_profile_response
 from nti.orgsync_rdbms.accounts.alchemy import get_account_profile_responses
+from nti.orgsync_rdbms.accounts.alchemy import get_accounts_like_profile_response
 
 from nti.orgsync_rdbms.database.interfaces import IOrgSyncDatabase
 
 from nti.orgsync_rdbms.organizations.alchemy import Organization
 from nti.orgsync_rdbms.organizations.alchemy import load_organization
 
+from nti.ou.analysis import OUNET_ID
+
 from nti.ou.orgsync_analysis import OUID
+
 
 #: Lock expire time 1.5(hr)
 DEFAULT_LOCK_EXPIRY_TIME = 5400
@@ -92,14 +98,19 @@ def get_account(account_id, db=None):
 
 
 def get_all_accounts(db=None, filters=None):
-    result = []
+    result = set()
     db = component.getUtility(IOrgSyncDatabase) if db is None else db
     session = getattr(db, 'session', db)
     account = aliased(Account)
+    # query table
     query_obj = query_filter_table(session, account, filters)
-    for row in query_obj.all():
-        result.append(row)
-    return result
+    # check for sooner id
+    if filters and (SOONER_ID in filters or OUNET_ID in filters):
+        v = filters.get(SOONER_ID) or filters.get(OUNET_ID)
+        value = "%" + "%s" % v + "%" 
+        result.update(get_accounts_like_profile_response(db, OUID, value))
+    result.update(query_obj.all())
+    return tuple(result)
 
 
 def get_account_ounetid(account, db=None):
