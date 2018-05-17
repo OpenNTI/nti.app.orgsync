@@ -7,6 +7,10 @@ from __future__ import absolute_import
 
 # pylint: disable=protected-access,too-many-public-methods
 
+from hamcrest import has_entry
+from hamcrest import has_length
+from hamcrest import assert_that
+
 from nti.app.orgsync.tests import OrgSyncApplicationTestLayer
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
@@ -18,6 +22,8 @@ class TestAccountViews(ApplicationLayerTest):
 
     layer = OrgSyncApplicationTestLayer
 
+    existing_username = 'jfazio@state-university'
+
     @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_account(self):
         self.testapp.get('/dataserver2/orgsync/accounts/30000',
@@ -28,5 +34,24 @@ class TestAccountViews(ApplicationLayerTest):
 
     @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_accounts(self):
-        self.testapp.get('/dataserver2/orgsync/accounts',
-                         status=200)
+        res = self.testapp.get('/dataserver2/orgsync/accounts',
+                               status=200)
+        
+        assert_that(res.json_body['Items'], has_length(1))
+        assert_that(res.json_body['Items'][0], has_entry('username', self.existing_username))
+
+        res = self.testapp.get('/dataserver2/orgsync/accounts',
+                               params={
+                                   'username': 'some_other_username'
+                               },
+                               status=200)
+        assert_that(res.json_body['Items'], has_length(0))
+
+        res = self.testapp.get('/dataserver2/orgsync/accounts',
+                               params={
+                                   'username': self.existing_username
+                               },
+                               status=200)
+        
+        assert_that(res.json_body['Items'], has_length(1))
+        assert_that(res.json_body['Items'][0], has_entry('username', self.existing_username))
