@@ -8,13 +8,14 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-import six
-import collections
-
 from requests.structures import CaseInsensitiveDict
 
 from pyramid.view import view_config
 from pyramid.view import view_defaults
+
+from zope import component
+
+from zope.cachedescriptors.property import Lazy
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
@@ -32,6 +33,8 @@ from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 
 from nti.orgsync.organizations.interfaces import IOrganization
+
+from nti.orgsync_rdbms.database.interfaces import IOrgSyncDatabase
 
 from nti.orgsync_rdbms.organizations.interfaces import IStorableOrganization
 
@@ -68,17 +71,16 @@ class OrganizationsView(AbstractAuthenticatedView,
     _DEFAULT_BATCH_START = 0
     _DEFAULT_BATCH_SIZE = 30
 
+    @Lazy
+    def database(self):
+        return component.getUtility(IOrgSyncDatabase)
+
     def __call__(self):
         result = LocatedExternalDict()
         result.__name__ = self.request.view_name
         result.__parent__ = self.request.context
         filters = CaseInsensitiveDict(self.request.params)
-        for f in filters.keys():
-            filt = filters[f]
-            # listify any singular values to match multi value searches
-            if isinstance(filt, six.string_types) or not isinstance(filt, collections.Iterable):
-                filters[f] = [filt]
-        orgs = get_all_organizations(filters=filters)
+        orgs = get_all_organizations(self.database, filters)
         items = result[ITEMS] = orgs
         self._batch_items_iterable(result, items)
         result[TOTAL] = len(orgs)
