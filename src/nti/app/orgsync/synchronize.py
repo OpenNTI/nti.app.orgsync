@@ -56,7 +56,6 @@ def synchronize_orgsync(start_date=None, end_date=None,
                                          workers=workers, timeout=timeout)
         if result:  # notify if there are logs
             notify(OrgSyncSyncEvent(db, datetime.now(), start_date, end_date))
-        return result
 
 
 def create_orgsync_sync_job(creator, start_date=None, end_date=None,
