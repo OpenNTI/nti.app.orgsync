@@ -71,8 +71,8 @@ def query_filter_table(session, table, filters=None):
     query_obj = session.query(table).order_by(table.id)
     if filters:
         # Filter out any nonsense filter keywords
-        org_cols = [col.key for col in table.__table__.columns]
-        valid_filters = {k: v for k, v in filters.iteritems() if k in org_cols}
+        org_cols = {col.key for col in table.__table__.columns}
+        valid_filters = {k: v for k, v in filters.items() if k in org_cols}
         # Chain filter commands on the query object for each filter
         for k, v in valid_filters.items():
             value = "%" + "%s" % v + "%"
@@ -86,13 +86,11 @@ def get_organization(org_id, db=None):
 
 
 def get_all_organizations(db=None, filters=None):
-    result = []
     db = component.getUtility(IOrgSyncDatabase) if db is None else db
     session = getattr(db, 'session', db)
     organization = aliased(Organization)
     query_obj = query_filter_table(session, organization, filters)
-    for row in query_obj.all():
-        result.append(row)
+    result = query_obj.all()
     return result
 
 
@@ -102,19 +100,23 @@ def get_account(account_id, db=None):
 
 
 def get_all_accounts(db=None, filters=None):
-    result = set()
     db = component.getUtility(IOrgSyncDatabase) if db is None else db
     session = getattr(db, 'session', db)
     account = aliased(Account)
     # query table
-    query_obj = query_filter_table(session, account, filters)
-    # check for sooner id
-    if filters and (SOONER_ID in filters or OUNET_ID in filters):
-        v = filters.get(SOONER_ID) or filters.get(OUNET_ID)
-        value = "%" + "%s" % v + "%"
-        result.update(get_accounts_like_profile_response(db, OUID, value))
-    result.update(query_obj.all())
-    return sorted(result)  # natural order
+    if filters:
+        query_obj = query_filter_table(session, account, filters)
+        result = {row for row in query_obj.all()}
+        # check for sooner id
+        if SOONER_ID in filters or OUNET_ID in filters:
+            v = filters.get(SOONER_ID) or filters.get(OUNET_ID)
+            value = "%" + "%s" % v + "%"
+            result.update(get_accounts_like_profile_response(db, OUID, value))
+        result = sorted(result)
+    else:
+        query_obj = session.query(account).order_by(account.id)
+        result = query_obj.all()
+    return result
 
 
 def get_account_ounetid(account, db=None):
