@@ -75,6 +75,7 @@ class _AccountsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
         links = result.setdefault(LINKS, [])
         href = get_account_ref(context, self.request)
         for name in ('profile',):
-            link = Link(href, rel=name, elements=('@@' + name),
+            name = "@@" + name
+            link = Link(href, rel=name, elements=(name,),
                         method='GET')
             links.append(link)
