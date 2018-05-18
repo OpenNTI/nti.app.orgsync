@@ -13,9 +13,9 @@ from pyramid.view import view_defaults
 
 from nti.app.orgsync.views import OrgSyncPathAdapter
 
-from nti.app.spark.views import SPARK_JOB_ERROR
-from nti.app.spark.views import SPARK_JOB_RESULT
-from nti.app.spark.views import SPARK_JOB_STATUS
+from nti.app.spark import SPARK_JOB_ERROR
+from nti.app.spark import SPARK_JOB_RESULT
+from nti.app.spark import SPARK_JOB_STATUS
 
 from nti.app.spark.views.job_views import SparkJobErrorView
 from nti.app.spark.views.job_views import SparkJobResultView
