@@ -18,8 +18,10 @@ import fudge
 from redis_lock import AlreadyAcquired
 
 from nti.app.orgsync.common import get_account
+from nti.app.orgsync.common import get_org_href
 from nti.app.orgsync.common import get_redis_lock
 from nti.app.orgsync.common import is_locked_held
+from nti.app.orgsync.common import get_account_ref
 from nti.app.orgsync.common import get_all_accounts
 from nti.app.orgsync.common import get_organization
 
@@ -67,3 +69,11 @@ class TestCommon(ApplicationLayerTest):
     @WithSharedApplicationMockDS
     def test_get_all_accounts(self):
         assert_that(get_all_accounts(), has_length(1))
+
+    def test_org_href(self):
+        assert_that(get_org_href(1),
+                    is_('/dataserver2/orgsync/orgs/1'))
+
+    def test_account_href(self):
+        assert_that(get_account_ref(1),
+                    is_('/dataserver2/orgsync/accounts/1'))

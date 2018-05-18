@@ -13,11 +13,9 @@ from pyramid.interfaces import IRequest
 from zope import component
 from zope import interface
 
-from nti.app.orgsync import ORGSYNC
-from nti.app.orgsync import ACCOUNTS
 from nti.app.orgsync import SOONER_ID
 
-from nti.app.orgsync.common import get_ds2
+from nti.app.orgsync.common import get_account_ref
 from nti.app.orgsync.common import get_account_ounetid
 
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
@@ -47,7 +45,7 @@ logger = __import__('logging').getLogger(__name__)
 @component.adapter(IStorableAccount)
 class _AccountDecorator(Singleton):
     """
-    Decorate an storable account
+    Decorate an account
     """
 
     def decorateExternalObject(self, context, result):
@@ -65,7 +63,7 @@ class _AccountDecorator(Singleton):
 @interface.implementer(IExternalObjectDecorator)
 class _AccountsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
     """
-    Decorate an account
+    Decorate links for an account
     """
 
     def _predicate(self, context, unused_result):
@@ -74,10 +72,9 @@ class _AccountsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
            and has_permission(ACT_READ, context, self.request)
 
     def _do_decorate_external(self, context, result):
-        account_id = str(context.id)
         links = result.setdefault(LINKS, [])
-        href = '/%s/%s/%s' % (get_ds2(self.request), ORGSYNC, ACCOUNTS)
+        href = get_account_ref(context, self.request)
         for name in ('profile',):
-            link = Link(href, rel=name, elements=(account_id, name),
+            link = Link(href, rel=name, elements=('@@' + name),
                         method='GET')
             links.append(link)
