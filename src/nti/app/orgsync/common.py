@@ -8,10 +8,10 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+from pyramid.threadlocal import get_current_request
+
 from redis_lock import AlreadyAcquired
 from redis_lock import Lock as RedisLock
-
-from pyramid.threadlocal import get_current_request
 
 from sqlalchemy.orm import aliased
 
