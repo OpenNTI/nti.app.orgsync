@@ -17,6 +17,9 @@ from sqlalchemy.orm import aliased
 
 from zope import component
 
+from nti.app.orgsync import ORGS
+from nti.app.orgsync import ORGSYNC
+from nti.app.orgsync import ACCOUNTS
 from nti.app.orgsync import SOONER_ID
 
 from nti.coremetadata.interfaces import IRedisClient
@@ -73,7 +76,7 @@ def query_filter_table(session, table, filters=None):
         valid_filters = {k: v for k, v in filters.iteritems() if k in org_cols}
         # Chain filter commands on the query object for each filter
         for k, v in valid_filters.items():
-            value = "%" + "%s" % v + "%" 
+            value = "%" + "%s" % v + "%"
             query_obj = query_obj.filter(getattr(table, k).like(value))
     return query_obj
 
@@ -109,7 +112,7 @@ def get_all_accounts(db=None, filters=None):
     # check for sooner id
     if filters and (SOONER_ID in filters or OUNET_ID in filters):
         v = filters.get(SOONER_ID) or filters.get(OUNET_ID)
-        value = "%" + "%s" % v + "%" 
+        value = "%" + "%s" % v + "%"
         result.update(get_accounts_like_profile_response(db, OUID, value))
     result.update(query_obj.all())
     return LocatedExternalList(result)
@@ -138,3 +141,25 @@ def get_ds2(request=None):
     except AttributeError:  # in unit test we may see this
         result = None
     return result or "dataserver2"
+
+
+def get_accounts_href(request=None):
+    root = get_ds2(request)
+    return '/%s/%s/%s' % (root, ORGSYNC, ACCOUNTS)
+
+
+def get_account_ref(account, request=None):
+    aid = getattr(account, "id", account)
+    href = get_accounts_href(request)
+    return "%s/%s" % (href, aid)
+
+
+def get_orgs_href(request=None):
+    root = get_ds2(request)
+    return '/%s/%s/%s' % (root, ORGSYNC, ORGS)
+
+
+def get_org_href(org, request=None):
+    oid = getattr(org, "id", org)
+    href = get_orgs_href(request)
+    return "%s/%s" % (href, oid)
