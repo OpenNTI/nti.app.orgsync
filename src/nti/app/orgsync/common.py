@@ -114,7 +114,7 @@ def get_all_accounts(db=None, filters=None):
         value = "%" + "%s" % v + "%"
         result.update(get_accounts_like_profile_response(db, OUID, value))
     result.update(query_obj.all())
-    return sorted(result) # natural order
+    return sorted(result)  # natural order
 
 
 def get_account_ounetid(account, db=None):
