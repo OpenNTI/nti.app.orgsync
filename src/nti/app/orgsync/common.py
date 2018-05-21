@@ -13,6 +13,8 @@ from pyramid.threadlocal import get_current_request
 from redis_lock import AlreadyAcquired
 from redis_lock import Lock as RedisLock
 
+from sqlalchemy import sql
+
 from sqlalchemy.orm import aliased
 
 from zope import component
@@ -77,6 +79,9 @@ def query_filter_table(session, table, filters=None):
         for k, v in valid_filters.items():
             value = "%" + "%s" % v + "%"
             query_obj = query_obj.filter(getattr(table, k).like(value))
+        # if no valid filters
+        if not valid_filters:
+            query_obj = session.query(table).filter(sql.false())
     return query_obj
 
 
