@@ -52,6 +52,13 @@ class TestAccountViews(ApplicationLayerTest):
                                },
                                status=200)
         assert_that(res.json_body['Items'], has_length(0))
+        
+        res = self.testapp.get('/dataserver2/orgsync/accounts',
+                               params={
+                                   'invalid': 'some_other_username'
+                               },
+                               status=200)
+        assert_that(res.json_body['Items'], has_length(0))
 
         res = self.testapp.get('/dataserver2/orgsync/accounts',
                                params={
