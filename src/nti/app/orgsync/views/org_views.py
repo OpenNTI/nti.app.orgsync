@@ -8,8 +8,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-from requests.structures import CaseInsensitiveDict
-
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 
@@ -75,12 +73,18 @@ class OrganizationsView(AbstractAuthenticatedView,
     def database(self):
         return component.getUtility(IOrgSyncDatabase)
 
+    @Lazy
+    def filters(self):
+        filters = dict(self.request.params)
+        filters.pop('batchSize', None)
+        filters.pop('batchStart', None)
+        return filters
+
     def __call__(self):
         result = LocatedExternalDict()
         result.__name__ = self.request.view_name
         result.__parent__ = self.request.context
-        filters = CaseInsensitiveDict(self.request.params)
-        orgs = get_all_organizations(self.database, filters)
+        orgs = get_all_organizations(self.database, self.filters)
         items = result[ITEMS] = orgs
         self._batch_items_iterable(result, items)
         result[TOTAL] = len(orgs)
