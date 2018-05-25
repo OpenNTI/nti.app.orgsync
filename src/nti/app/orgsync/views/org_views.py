@@ -86,6 +86,7 @@ class OrganizationsView(AbstractAuthenticatedView,
         result.__parent__ = self.request.context
         orgs = get_all_organizations(self.database, self.filters)
         items = result[ITEMS] = orgs
+        items.sort(key=lambda x: x.id)
         self._batch_items_iterable(result, items)
         result[TOTAL] = len(orgs)
         return result
