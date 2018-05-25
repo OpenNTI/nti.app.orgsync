@@ -34,9 +34,3 @@ SNAPSHOT = 'snapshot'
 
 #: Snapshot view
 SOONER_ID = 'SoonerID'
-
-#: ID
-ID = "id"
-
-#: Account last_name
-LAST_NAME = "last_name"
