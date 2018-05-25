@@ -102,6 +102,7 @@ class AccountsView(AbstractAuthenticatedView,
         result.__parent__ = self.request.context
         accounts = get_all_accounts(self.database, self.filters)
         items = result[ITEMS] = accounts
+        items.sort(key=lambda x: x.id)
         self._batch_items_iterable(result, items)
         result[TOTAL] = len(accounts)
         return result
