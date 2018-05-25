@@ -74,9 +74,3 @@ class OrgSyncSyncEvent(ObjectEvent):
         self.timestamp = timestamp
         self.start_date = start_date
         self.end_date = end_date
-
-
-# class IAccoutWithProfile():
-#     """
-#     Store an OrgSync acccount along with the profile
-#     """
