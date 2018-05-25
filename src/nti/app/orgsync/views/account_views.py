@@ -131,7 +131,6 @@ class AccountsView(AbstractAuthenticatedView,
             ext_obj = to_external_object(a)
             ext_obj.update(profile)
             items.append(ext_obj)
-        from pdb import set_trace; set_trace()
         items.sort(key=lambda x: x[sort_by])
         self._batch_items_iterable(result, items)
         result[TOTAL] = len(accounts)
