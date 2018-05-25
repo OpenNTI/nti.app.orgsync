@@ -8,6 +8,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+from pyramid import httpexceptions as hexc
+
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 
@@ -17,7 +19,18 @@ from zope.cachedescriptors.property import Lazy
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
+from nti.app.externalization.error import raise_json_error
+
+from nti.app.orgsync import MessageFactory as _
+
 from nti.app.externalization.view_mixins import BatchingUtilsMixin
+
+from nti.app.orgsync import ID
+from nti.app.orgsync import MAJOR
+from nti.app.orgsync import OUFBYF
+from nti.app.orgsync import SOONER_ID
+from nti.app.orgsync import LAST_NAME
+from nti.app.orgsync import FIRST_NAME
 
 from nti.app.orgsync.interfaces import ACT_VIEW_ACCOUNTS
 
@@ -85,6 +98,8 @@ class AccountsView(AbstractAuthenticatedView,
     _DEFAULT_BATCH_START = 0
     _DEFAULT_BATCH_SIZE = 30
 
+    SORT_COLS = (ID, FIRST_NAME, LAST_NAME, MAJOR, SOONER_ID, OUFBYF)
+
     @Lazy
     def database(self):
         return component.getUtility(IOrgSyncDatabase)
@@ -97,12 +112,27 @@ class AccountsView(AbstractAuthenticatedView,
         return filters
 
     def __call__(self):
+        sort_by = self.filters.pop('sortBy', ID)
+        if sort_by not in self.SORT_COLS:
+            raise_json_error(self.request,
+                             hexc.HTTPUnprocessableEntity,
+                             {
+                                 'message': _(u"Invalid sort column."),
+                                 'code': 'CannotSortOnColumn',
+                             },
+                             None)
         result = LocatedExternalDict()
         result.__name__ = self.request.view_name
         result.__parent__ = self.request.context
         accounts = get_all_accounts(self.database, self.filters)
-        items = result[ITEMS] = accounts
-        items.sort(key=lambda x: x.last_name)
+        items = result[ITEMS] = []
+        for a in accounts:
+            profile = get_account_profile(a)
+            ext_obj = to_external_object(a)
+            ext_obj.update(profile)
+            items.append(ext_obj)
+        from pdb import set_trace; set_trace()
+        items.sort(key=lambda x: x[sort_by])
         self._batch_items_iterable(result, items)
         result[TOTAL] = len(accounts)
         return result
