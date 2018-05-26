@@ -112,6 +112,7 @@ class AccountsView(AbstractAuthenticatedView,
         return filters
 
     def __call__(self):
+        # pylint: disable=no-member
         sort_by = self.filters.pop('sortBy', ID)
         if sort_by not in self.SORT_COLS:
             raise_json_error(self.request,
