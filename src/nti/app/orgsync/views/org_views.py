@@ -8,6 +8,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+from pyramid import httpexceptions as hexc
+
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 
@@ -17,7 +19,14 @@ from zope.cachedescriptors.property import Lazy
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
+from nti.app.externalization.error import raise_json_error
+
+from nti.app.orgsync import MessageFactory as _
+
 from nti.app.externalization.view_mixins import BatchingUtilsMixin
+
+from nti.app.orgsync import ID
+from nti.app.orgsync import LONG_NAME
 
 from nti.app.orgsync.interfaces import ACT_VIEW_ORGS
 
@@ -35,6 +44,10 @@ from nti.orgsync.organizations.interfaces import IOrganization
 from nti.orgsync_rdbms.database.interfaces import IOrgSyncDatabase
 
 from nti.orgsync_rdbms.organizations.interfaces import IStorableOrganization
+
+from nti.ou.orgsync_recommendations import DESCRIPTION
+
+from nti.orgsync_spark import CREATED_AT
 
 ITEMS = StandardExternalFields.ITEMS
 TOTAL = StandardExternalFields.TOTAL
@@ -69,6 +82,8 @@ class OrganizationsView(AbstractAuthenticatedView,
     _DEFAULT_BATCH_START = 0
     _DEFAULT_BATCH_SIZE = 30
 
+    SORT_COLS = (ID, CREATED_AT, LONG_NAME, DESCRIPTION)
+
     @Lazy
     def database(self):
         return component.getUtility(IOrgSyncDatabase)
@@ -81,12 +96,21 @@ class OrganizationsView(AbstractAuthenticatedView,
         return filters
 
     def __call__(self):
+        sort_by = self.filters.pop('sort_by', ID)
+        if sort_by not in self.SORT_COLS:
+            raise_json_error(self.request,
+                             hexc.HTTPUnprocessableEntity,
+                             {
+                                 'message': _(u"Invalid sort column."),
+                                 'code': 'CannotSortOnColumn',
+                             },
+                             None)
         result = LocatedExternalDict()
         result.__name__ = self.request.view_name
         result.__parent__ = self.request.context
         orgs = get_all_organizations(self.database, self.filters)
         items = result[ITEMS] = orgs
-        items.sort(key=lambda x: x.short_name)
+        items.sort(key=lambda x: getattr(x, sort_by))
         self._batch_items_iterable(result, items)
         result[TOTAL] = len(orgs)
         return result

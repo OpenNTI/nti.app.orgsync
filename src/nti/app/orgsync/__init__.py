@@ -38,5 +38,20 @@ SOONER_ID = 'SoonerID'
 #: ID
 ID = "id"
 
+#: Account first_name
+FIRST_NAME = "first_name"
+
 #: Account last_name
 LAST_NAME = "last_name"
+
+#: Account Major
+MAJOR = "Major"
+
+#: Account 4x4
+OUFBYF = "OU 4x4"
+
+#: Organization keywords
+KEYWORDS = "keywords"
+
+#: Organization long name
+LONG_NAME = "long_name"
