@@ -23,13 +23,12 @@ class TestLogsViews(ApplicationLayerTest):
     @WithSharedApplicationMockDS(testapp=True, users=True)
     @fudge.patch('nti.app.orgsync.views.logs_views.get_membership_logs')
     def test_logs(self, mock_gml):
-        mock_gml.is_callable().returns([1,2,3])
+        mock_gml.is_callable().returns([1, 2, 3])
 
         self.testapp.get('/dataserver2/orgsync/logs',
                          params={'orgs': '152512',
                                  'accounts': '7170547'},
                          status=200)
-
 
         self.testapp.get('/dataserver2/orgsync/logs/@@last_entry',
                          status=200)
