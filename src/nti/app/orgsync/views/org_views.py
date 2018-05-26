@@ -96,7 +96,8 @@ class OrganizationsView(AbstractAuthenticatedView,
         return filters
 
     def __call__(self):
-        sort_by = self.filters.pop('sort_by', ID)
+        # pylint: disable=no-member
+        sort_by = self.filters.pop('sortBy', ID)
         if sort_by not in self.SORT_COLS:
             raise_json_error(self.request,
                              hexc.HTTPUnprocessableEntity,
