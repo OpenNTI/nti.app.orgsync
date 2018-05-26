@@ -32,6 +32,11 @@ class TestOrgViews(ApplicationLayerTest):
 
     @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_orgs(self):
+        self.testapp.get('/dataserver2/orgsync/orgs',
+                         params={
+                            'sortBy': 'invalid'
+                         },
+                         status=422)
         res = self.testapp.get('/dataserver2/orgsync/orgs',
                                 status=200)
         assert_that(res.json_body['Items'], has_length(1))
