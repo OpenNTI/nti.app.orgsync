@@ -39,6 +39,11 @@ class TestAccountViews(ApplicationLayerTest):
 
     @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_accounts(self):
+        self.testapp.get('/dataserver2/orgsync/accounts',
+                         params={
+                            'sortBy': 'invalid'
+                         },
+                         status=422)
         res = self.testapp.get('/dataserver2/orgsync/accounts',
                                status=200)
 
