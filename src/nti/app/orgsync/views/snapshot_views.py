@@ -25,12 +25,13 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
-from nti.app.orgsync_spark.interfaces import ACT_SNAPSHOPT
+from nti.app.orgsync import SNAPSHOT
 
-from nti.app.orgsync_spark.snapshot import is_snapshot_lock_held
+from nti.app.orgsync.interfaces import ACT_SNAPSHOPT
+
 from nti.app.orgsync_spark.snapshot import create_orgsync_source_snapshot_job
 
-from nti.app.orgsync_spark.views import SparkPathAdapter
+from nti.app.orgsync.views import OrgSyncPathAdapter
 
 from nti.app.spark.common import parse_timestamp
 
@@ -50,11 +51,11 @@ from nti.spark.utils import get_timestamp
 logger = __import__('logging').getLogger(__name__)
 
 
-@view_config(name="snapshot")
+@view_config(name=SNAPSHOT)
 @view_defaults(route_name='objects.generic.traversal',
                renderer='rest',
                request_method='POST',
-               context=SparkPathAdapter,
+               context=OrgSyncPathAdapter,
                permission=ACT_SNAPSHOPT)
 class SnapshotOrgSyncView(AbstractAuthenticatedView,
                           ModeledContentUploadRequestUtilsMixin):
