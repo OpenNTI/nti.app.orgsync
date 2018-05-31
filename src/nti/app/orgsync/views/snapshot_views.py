@@ -91,6 +91,9 @@ class SnapshotOrgSyncView(AbstractAuthenticatedView,
     def parse_timestamp(self, values):
         return parse_timestamp(values.get('timestamp'))
 
+    def parse_logs(self, values):
+        return is_true(values.get('logs', False))
+
     def __call__(self):
         result = LocatedExternalDict()
         result.__name__ = self.request.view_name
@@ -106,7 +109,7 @@ class SnapshotOrgSyncView(AbstractAuthenticatedView,
         # parse timestamp
         timestamp = self.parse_timestamp(data)
         # parse bools
-        logs = is_true(data.get('logs', False))
+        logs = self.parse_logs(data)
         archive = is_true(data.get('archive', True))
         # create job
         result = self.create_job(creator, timestamp, start_date, 
