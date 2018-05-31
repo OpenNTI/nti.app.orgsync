@@ -29,14 +29,11 @@ from nti.app.orgsync import SNAPSHOT
 
 from nti.app.orgsync.interfaces import ACT_SNAPSHOPT
 
-from nti.app.orgsync_spark.snapshot import create_orgsync_source_snapshot_job
+from nti.app.orgsync.snapshot import create_orgsync_source_snapshot_job
 
 from nti.app.orgsync.views import OrgSyncPathAdapter
 
 from nti.app.spark.common import parse_timestamp
-
-from nti.app.spark.views import SPARK_JOB_ERROR
-from nti.app.spark.views import SPARK_JOB_STATUS
 
 from nti.orgsync_spark import CREATED_AT
 
