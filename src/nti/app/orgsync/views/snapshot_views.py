@@ -8,7 +8,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-import isodate
+from datetime import datetime
 
 from pyramid.view import view_config
 from pyramid.view import view_defaults
@@ -60,7 +60,7 @@ class SnapshotOrgSyncView(AbstractAuthenticatedView,
     Schedule a orgsync snapshop job
     """
 
-    DEFAULT_START = isodate.parse_date("2017-01-01")
+    DEFAULT_START = datetime(2017, 1, 1)
 
     @Lazy
     def last_entry(self):
