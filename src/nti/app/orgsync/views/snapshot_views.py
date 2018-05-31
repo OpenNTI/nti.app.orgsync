@@ -8,7 +8,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-import isodate
+from datetime import datetime
 
 from pyramid.view import view_config
 from pyramid.view import view_defaults
@@ -16,6 +16,8 @@ from pyramid.view import view_defaults
 from requests.structures import CaseInsensitiveDict
 
 from sqlalchemy import func
+
+from sqlalchemy.orm import aliased
 
 from zope import component
 
@@ -43,8 +45,6 @@ from nti.common.string import is_true
 
 from nti.externalization.interfaces import LocatedExternalDict
 
-from nti.spark.utils import get_timestamp
-
 logger = __import__('logging').getLogger(__name__)
 
 
@@ -60,21 +60,39 @@ class SnapshotOrgSyncView(AbstractAuthenticatedView,
     Schedule a orgsync snapshop job
     """
 
-    DEFAULT_START = 20170101
+    DEFAULT_START = datetime(2017, 1, 1)
 
     @Lazy
     def last_entry(self):
-        db = component.getUtility(IOrgSyncDatabase)
-        newest = db.session.query(func.max(MembershipLog.created_at)).all()
-        if newest:
-            newest = newest[0][0]
-            return isodate.datetime_isoformat(newest, isodate.DATE_EXT_COMPLETE)
+        session = component.getUtility(IOrgSyncDatabase).session
+        entries = aliased(MembershipLog)
+        return session.query(func.max(entries.created_at)).scalar()
 
     def readInput(self, value=None):
         result = None
         if self.request.body:
             result = super(SnapshotOrgSyncView, self).readInput(value)
         return CaseInsensitiveDict(result or {})
+
+    def create_job(self, creator, timestamp, start_date, end_date, logs=True, archive=True):
+        result = create_orgsync_source_snapshot_job(creator, timestamp, start_date,
+                                                    end_date, logs, archive)
+        return result
+
+    def parse_endDate(self, values):
+        # parse end date. Default to today if not present
+        return parse_timestamp(values.get('endDate'))
+    
+    def parse_startDate(self, values):
+        start_date = values.get('startDate')
+        alt_start = self.last_entry or self.DEFAULT_START
+        return parse_timestamp(start_date) if start_date else alt_start
+
+    def parse_timestamp(self, values):
+        return parse_timestamp(values.get('timestamp'))
+
+    def parse_logs(self, values):
+        return is_true(values.get('logs', False))
 
     def __call__(self):
         result = LocatedExternalDict()
@@ -84,18 +102,16 @@ class SnapshotOrgSyncView(AbstractAuthenticatedView,
         data = self.readInput()
         # pylint: disable=no-member
         creator = self.remoteUser.username
-        # parse dates
-        end_date = data.get('endDate')
-        end_date = parse_timestamp(end_date) if end_date else get_timestamp()
-        start_date = data.get('startDate')
-        alt_start = self.last_entry or self.DEFAULT_START
-        start_date = parse_timestamp(start_date) if start_date else alt_start
+        # parse end date. Default to today if not present
+        end_date = self.parse_endDate(data)
+        # parse start date
+        start_date = self.parse_startDate(data)
         # parse timestamp
-        timestamp = parse_timestamp(data.get('timestamp'))
+        timestamp = self.parse_timestamp(data)
         # parse bools
-        logs = is_true(data.get('logs', False))
+        logs = self.parse_logs(data)
         archive = is_true(data.get('archive', True))
         # create job
-        result = create_orgsync_source_snapshot_job(creator, timestamp, start_date,
-                                                    end_date, logs, archive)
+        result = self.create_job(creator, timestamp, start_date, 
+                                 end_date, logs, archive)
         return result
