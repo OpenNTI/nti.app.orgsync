@@ -15,6 +15,8 @@ from pyramid.view import view_defaults
 
 from requests.structures import CaseInsensitiveDict
 
+from sqlalchemy import func
+
 from zope import component
 
 from zope.cachedescriptors.property import Lazy
@@ -33,9 +35,9 @@ from nti.app.orgsync.views import OrgSyncPathAdapter
 
 from nti.app.spark.common import parse_timestamp
 
-from nti.orgsync_spark import CREATED_AT
+from nti.orgsync_rdbms.entries.alchemy import MembershipLog
 
-from nti.orgsync_spark.entries import IMembershipLogs
+from nti.orgsync_rdbms.database.interfaces import IOrgSyncDatabase
 
 from nti.common.string import is_true
 
@@ -62,10 +64,11 @@ class SnapshotOrgSyncView(AbstractAuthenticatedView,
 
     @Lazy
     def last_entry(self):
-        entries = component.getUtility(IMembershipLogs).entries
-        if entries is not None and not entries.rdd.isEmpty():
-            tdt = entries.agg({CREATED_AT: "max"}).collect()[0][0]
-            return isodate.datetime_isoformat(tdt, isodate.DATE_EXT_COMPLETE)
+        db = component.getUtility(IOrgSyncDatabase)
+        newest = db.session.query(func.max(MembershipLog.created_at)).all()
+        if newest:
+            newest = newest[0][0]
+            return isodate.datetime_isoformat(newest, isodate.DATE_EXT_COMPLETE)
 
     def readInput(self, value=None):
         result = None
