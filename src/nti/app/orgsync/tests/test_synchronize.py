@@ -34,13 +34,15 @@ class TestSync(ApplicationLayerTest):
                  'nti.app.orgsync.synchronize.process_classifications',
                  'nti.app.orgsync.synchronize.process_membership_logs',
                  'nti.app.orgsync.synchronize.getUtility',
-                 'nti.app.orgsync.subscribers.orgsync_source_snapshot')
-    def test_sync(self, mock_lock, mock_cla, mock_pml, mock_gu, mock_snapshot):
+                 'nti.app.orgsync.subscribers.orgsync_source_snapshot',
+                 'nti.app.orgsync.synchronize.update_organizations')
+    def test_sync(self, mock_lock, mock_cla, mock_pml, mock_gu, mock_snapshot, mock_upo):
         mock_cla.is_callable().returns(True)
         mock_pml.is_callable().returns(True)
         mock_gu.is_callable().returns_fake()
         mock_snapshot.is_callable().returns_fake()
         mock_lock.is_callable().returns(NoOpCM())
+        mock_upo.is_callable().returns_fake()
         successful = synchronize_orgsync()
         assert_that(successful, is_(True))
 

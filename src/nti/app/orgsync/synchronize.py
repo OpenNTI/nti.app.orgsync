@@ -28,8 +28,14 @@ from nti.orgsync.interfaces import IOrgSyncKey
 
 from nti.orgsync_rdbms.database.interfaces import IOrgSyncDatabase
 
+from nti.orgsync_rdbms.organizations.alchemy import Organization
+
 from nti.orgsync_rdbms.synchronize.synchronize import process_classifications
 from nti.orgsync_rdbms.synchronize.synchronize import process_membership_logs
+
+from nti.ou.recommendations_database.interfaces import IOURecommendationsDatabase
+
+from nti.ou.orgsync_recommendations.uploader import update_organizations
 
 #: Orgsync sync lock name
 SYNC_ORGSYNC_LOCK = '++etc++orgsync++sync++lock'
@@ -56,6 +62,8 @@ def synchronize_orgsync(start_date=None, end_date=None,
                                          workers=workers, timeout=timeout)
         if result:  # notify if there are logs
             notify(OrgSyncSyncEvent(db, datetime.now(), start_date, end_date))
+        rec_db = getUtility(IOURecommendationsDatabase)
+        update_organizations(rec_db, db, Organization)
 
 
 def create_orgsync_sync_job(creator, start_date=None, end_date=None,
